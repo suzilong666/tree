@@ -4,7 +4,7 @@ import { ensureArray } from '../utils/array'
 
 export function breadthFirst<T>(
     tree: TreeNode<T> | TreeNode<T>[],
-    callback: (node: TreeNode<T>) => void,
+    callback: (node: TreeNode<T>) => void | boolean,
     options: TreeOptions = {}
 ): void {
     const { childrenKey = DEFAULT_CHILDREN_KEY } = options
@@ -13,7 +13,8 @@ export function breadthFirst<T>(
 
     while (queue.length > 0) {
         const node = queue.shift()!
-        callback(node)
+        const res = callback(node)
+        if (res === false) return
         const children = node[childrenKey]
         if (children && Array.isArray(children)) {
             queue.push(...children)

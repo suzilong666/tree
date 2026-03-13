@@ -1,23 +1,52 @@
 // src/traverse/depthFirst.ts
-import { TreeNode, TreeOptions } from '../types/tree'
+import { TraversalContext, TreeNode, TreeOptions } from '../types/tree'
 import { DEFAULT_CHILDREN_KEY } from '../constants/index'
 import { ensureArray } from '../utils/array'
 
 export function depthFirst(
     tree: TreeNode | TreeNode[],
-    callback: (node: TreeNode) => void,
+    callback: (node: TreeNode, context: TraversalContext) => void | boolean,
     options: TreeOptions = {}
 ): void {
     const { childrenKey = DEFAULT_CHILDREN_KEY } = options
     const order = options.order === 'post' ? 'post' : 'pre'
-    const nodes = ensureArray(tree)
+    const newTree = ensureArray(tree)
+    let isStop = false // 用于标记是否需要停止遍历
 
-    for (const node of nodes) {
-        if (order === 'pre') callback(node)
-        const children = node[childrenKey]
-        if (children && Array.isArray(children)) {
-            depthFirst(children, callback, options)
+    function recursion(
+        nodes: TreeNode[],
+        parent: TreeNode | null,
+        depth: number,
+        path: TreeNode[]
+    ): void {
+        for (let i = 0; i < nodes.length; i++) {
+            if (isStop) return // 如果标记为停止，直接返回
+            const node = nodes[i]
+            const currentPath = [...path, node] // 当前路径
+            const context: TraversalContext = {
+                depth,
+                parent,
+                path: currentPath,
+            }
+            if (order === 'pre') {
+                if (callback(node, context) === false) {
+                    isStop = true
+                    return
+                }
+            }
+            const children = node[childrenKey]
+            if (children && Array.isArray(children)) {
+                recursion(children, node, depth + 1, currentPath)
+                if (isStop) return // 防止后序遍历时继续执行回调
+            }
+            if (order === 'post') {
+                if (callback(node, context) === false) {
+                    isStop = true
+                    return
+                }
+            }
         }
-        if (order === 'post') callback(node)
     }
+
+    recursion(newTree, null, 0, [])
 }
