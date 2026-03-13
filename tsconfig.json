@@ -1,23 +1,23 @@
 {
-  "compilerOptions": {
-    "target": "ES5", // 根据你的支持环境调整，一般库要兼容ES5
-    "module": "ES2015", // Rollup 处理 ES 模块
-    "lib": ["ESNext", "DOM"], // 如果使用了DOM API，加上"DOM"
-    "declaration": true, // 生成 .d.ts 类型声明文件
-    "declarationDir": "./types", // 类型声明文件输出目录（可选）
-    "emitDeclarationOnly": false, // 不单独只输出声明，由Rollup处理
-    "outDir": "./dist", // 编译输出目录（实际由Rollup控制，但TS需要）
-    "rootDir": "./src", // 源码目录
-    "strict": true, // 开启严格模式
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true, // 确保每个文件都可以被独立编译，与Rollup配合良好
-    "importHelpers": true, // 使用 tslib 减少重复代码
-    "noEmit": true // 如果使用Rollup编译，可以禁止tsc输出，避免冲突
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+    "compilerOptions": {
+        "target": "ES5", // 根据你的支持环境调整，一般库要兼容ES5
+        "module": "ES2015", // Rollup 处理 ES 模块
+        "lib": ["ESNext", "DOM"], // 如果使用了DOM API，加上"DOM"
+        "declaration": true, // 生成 .d.ts 类型声明文件
+        "declarationDir": "./types", // 类型声明文件输出目录（可选）
+        "emitDeclarationOnly": false, // 不单独只输出声明，由Rollup处理
+        "outDir": "./dist", // 编译输出目录（实际由Rollup控制，但TS需要）
+        "rootDir": "./src", // 源码目录
+        "strict": true, // 开启严格模式
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "isolatedModules": true, // 确保每个文件都可以被独立编译，与Rollup配合良好
+        "importHelpers": true, // 使用 tslib 减少重复代码
+        "noEmit": true // 如果使用Rollup编译，可以禁止tsc输出，避免冲突
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "dist"]
 }

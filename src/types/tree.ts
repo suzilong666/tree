@@ -1,9 +1,9 @@
-export interface TreeNode<T = any> {
-  [key: string]: any;
-  children?: TreeNode<T>[];
+export interface TreeNode<T = unknown> {
+    [key: string]: unknown
+    children?: TreeNode<T>[]
 }
 
 export type TreeOptions = {
-  childrenKey?: string; // 自定义子节点字段名，默认为 'children'
-  order?: "pre" | "post"; // 遍历顺序，默认为 'pre'（前序遍历）
-};
+    childrenKey?: string // 自定义子节点字段名，默认为 'children'
+    order?: 'pre' | 'post' // 遍历顺序，默认为 'pre'（前序遍历）
+}
