@@ -5,5 +5,8 @@
  *   注意：根据你的业务场景，可能需要针对 null/undefined 做特殊处理（如返回空数组）。
  */
 export function ensureArray<T>(value: T | T[]): T[] {
+    if (value === null || value === undefined) {
+        return []
+    }
     return Array.isArray(value) ? value : [value]
 }

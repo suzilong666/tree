@@ -14,7 +14,7 @@ export default [
             'dist/**', // 忽略 dist 目录及其所有内容
             'node_modules/**', // 通常 ESLint 默认忽略 node_modules，但显式写上更安全
             '**/*.d.ts', // 忽略 TypeScript 声明文件
-            'test/**', // 如果有测试文件夹，也可以选择忽略
+            '**/*.test.ts', // 如果有测试文件夹，也可以选择忽略
             'rollup.config.js',
         ],
     },
