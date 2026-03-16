@@ -42,3 +42,20 @@ export interface ArrayToTreeOptions {
     /** 根节点的父标识值，默认为 null 或 undefined */
     rootParentValue?: null | undefined | string | number
 }
+
+export interface TreeToArrayOptions {
+    /** 节点唯一标识字段名，默认为 'id' */
+    idKey?: string
+    /** 输出中父节点标识字段名，默认为 'parentId' */
+    parentIdKey?: string
+    /** 自定义子节点字段名，默认为 'children' */
+    childrenKey?: string
+    /** 根节点的父标识值，默认为 null */
+    rootParentValue?: null | undefined | string | number
+    /** 是否在输出中保留子节点数组，默认为 false（移除 children） */
+    keepChildren?: boolean
+    /** 遍历策略，默认为 'dfs' */
+    strategy?: 'dfs' | 'bfs'
+    /** 遍历顺序，仅对 dfs 有效，默认为 'pre' */
+    order?: 'pre' | 'post'
+}
