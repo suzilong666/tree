@@ -1,8 +1,10 @@
-// import tree from './src/index'
-// const { find, depthFirst } = tree
+import tree from './src/index'
 
-// const node = { id: 'single' }
+const data = [
+    { id: 1, name: 'First', parentId: null },
+    { id: 1, name: 'Second', parentId: null },
+]
 
-// depthFirst(node, (node, context) => console.log(node, context), {
-//     order: 'pre',
-// })
+const res = tree.arrayToTree(data)
+
+console.log(res)
