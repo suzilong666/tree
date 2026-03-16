@@ -1,236 +1,304 @@
-import { TreeNode } from '../../types/tree'
-import { breadthFirst } from '../breadthFirst'
+import { breadthFirst } from '../breadthFirst' // 根据实际路径调整
+import { TreeNode, TraversalContext } from '../../types/tree' // 根据实际路径调整
 
 describe('breadthFirst 广度优先遍历', () => {
-    // 辅助函数：构建标准测试树
-    const createTree = (): TreeNode => ({
-        id: 'A',
+    // 辅助函数：收集遍历过程中的节点 ID 和上下文
+    const collectTraversal = (
+        tree: TreeNode | TreeNode[],
+        options?: Parameters<typeof breadthFirst>[2]
+    ) => {
+        const order: string[] = []
+        const contexts: TraversalContext[] = []
+        const callback = (node: TreeNode, context: TraversalContext) => {
+            order.push(node.id as string)
+            contexts.push({ ...context }) // 浅拷贝，避免后续修改影响
+        }
+        breadthFirst(tree, callback, options)
+        return { order, contexts }
+    }
+
+    // 测试树结构（使用 id 标识节点）
+    const tree: TreeNode = {
+        id: 'root',
         children: [
             {
-                id: 'B',
-                children: [{ id: 'D' }, { id: 'E' }],
+                id: 'a',
+                children: [
+                    { id: 'a1' },
+                    { id: 'a2', children: [{ id: 'a2x' }] },
+                ],
             },
             {
-                id: 'C',
-                children: [{ id: 'F' }],
+                id: 'b',
+                children: [{ id: 'b1' }],
             },
+            { id: 'c' },
         ],
-    })
+    }
 
-    // 预期广度优先顺序（按层）
-    const expectedOrder = ['A', 'B', 'C', 'D', 'E', 'F']
-
-    describe('基本功能', () => {
-        it('应该对单个节点执行回调', () => {
-            const node: TreeNode = { id: 'single' }
-            const callback = jest.fn()
-
-            breadthFirst(node, callback)
-
-            expect(callback).toHaveBeenCalledTimes(1)
-            expect(callback).toHaveBeenCalledWith(node)
-        })
-
-        it('应该按广度优先顺序遍历树', () => {
-            const tree = createTree()
-            const callback = jest.fn()
-
-            breadthFirst(tree, callback)
-
-            expect(callback).toHaveBeenCalledTimes(6)
-            const calledIds = callback.mock.calls.map((call) => call[0].id)
-            expect(calledIds).toEqual(expectedOrder)
-        })
-
-        it('应该遍历森林（多个根节点）', () => {
-            const forest: TreeNode[] = [
-                { id: 'X', children: [{ id: 'X1' }] },
-                { id: 'Y', children: [{ id: 'Y1' }] },
-            ]
-            const callback = jest.fn()
-
-            breadthFirst(forest, callback)
-
-            // 广度优先：先遍历所有根节点，再遍历下一层
-            expect(callback).toHaveBeenCalledTimes(4)
-            const calledIds = callback.mock.calls.map((call) => call[0].id)
-            expect(calledIds).toEqual(['X', 'Y', 'X1', 'Y1'])
-        })
-
-        it('应该处理深度很大的树（非平衡）', () => {
-            const deepTree: TreeNode = {
-                id: '1',
-                children: [
-                    {
-                        id: '2',
-                        children: [
-                            {
-                                id: '3',
-                                children: [{ id: '4' }],
-                            },
-                        ],
-                    },
-                ],
-            }
-            const callback = jest.fn()
-            breadthFirst(deepTree, callback)
-            expect(callback.mock.calls.map((c) => c[0].id)).toEqual([
-                '1',
-                '2',
-                '3',
-                '4',
+    describe('基本遍历顺序', () => {
+        it('应按照广度优先（逐层从左到右）的顺序访问节点', () => {
+            const { order } = collectTraversal(tree)
+            // 预期顺序：
+            // 第0层: root
+            // 第1层: a, b, c
+            // 第2层: a1, a2, b1
+            // 第3层: a2x
+            expect(order).toEqual([
+                'root',
+                'a',
+                'b',
+                'c',
+                'a1',
+                'a2',
+                'b1',
+                'a2x',
             ])
         })
     })
 
-    describe('自定义 childrenKey', () => {
-        it('应该使用自定义的子节点字段名', () => {
-            const tree = {
-                id: 'root',
-                subs: [
-                    { id: 'child1', subs: [] },
-                    { id: 'child2', subs: [] },
-                ],
-            }
-            const callback = jest.fn()
+    describe('多根节点（森林）', () => {
+        const forest: TreeNode[] = [
+            { id: 'r1', children: [{ id: 'r1c1' }] },
+            { id: 'r2', children: [{ id: 'r2c1' }] },
+        ]
 
-            breadthFirst(tree, callback, { childrenKey: 'subs' })
-
-            expect(callback).toHaveBeenCalledTimes(3)
-            const calledIds = callback.mock.calls.map((call) => call[0].id)
-            expect(calledIds).toEqual(['root', 'child1', 'child2'])
-        })
-
-        it('如果自定义字段不存在，应跳过子节点', () => {
-            const tree = {
-                id: 'root',
-                // 没有 children 字段
-            }
-            const callback = jest.fn()
-
-            breadthFirst(tree, callback, { childrenKey: 'subs' })
-
-            expect(callback).toHaveBeenCalledTimes(1)
-            expect(callback).toHaveBeenCalledWith(tree)
+        it('应依次遍历每个根节点及其子树（按层）', () => {
+            const { order } = collectTraversal(forest)
+            // 预期：
+            // 第0层: r1, r2
+            // 第1层: r1c1, r2c1
+            expect(order).toEqual(['r1', 'r2', 'r1c1', 'r2c1'])
         })
     })
 
-    describe('边界情况', () => {
-        it('应该处理空数组输入（不调用回调）', () => {
+    describe('自定义 childrenKey', () => {
+        const treeCustom: TreeNode = {
+            id: 'root',
+            subs: [{ id: 'a', subs: [{ id: 'a1' }] }, { id: 'b' }],
+        }
+
+        it('应使用指定的 childrenKey 查找子节点', () => {
+            const { order } = collectTraversal(treeCustom, {
+                childrenKey: 'subs',
+            })
+            expect(order).toEqual(['root', 'a', 'b', 'a1'])
+        })
+
+        it('使用不存在的 childrenKey 应视为无子节点', () => {
+            const { order } = collectTraversal(treeCustom, {
+                childrenKey: 'nonexistent',
+            })
+            expect(order).toEqual(['root']) // 子节点不被遍历
+        })
+    })
+
+    describe('停止遍历', () => {
+        it('当回调返回 false 时应立即停止遍历', () => {
+            const visited: string[] = []
+            const callback = (node: TreeNode) => {
+                visited.push(node.id as string)
+                if (node.id === 'b') return false // 停止
+            }
+            breadthFirst(tree, callback)
+            // 访问顺序：root, a, b 后停止，c 及后续节点不被访问
+            expect(visited).toEqual(['root', 'a', 'b'])
+        })
+
+        it('停止后不应再处理队列中剩余的节点', () => {
+            const visited: string[] = []
+            const callback = (node: TreeNode) => {
+                visited.push(node.id as string)
+                if (node.id === 'a') return false
+            }
+            breadthFirst(tree, callback)
+            // 访问 root, a 后停止，b 和 c 不应被访问
+            expect(visited).toEqual(['root', 'a'])
+        })
+    })
+
+    describe('上下文信息 (depth, parent, path)', () => {
+        it('应提供正确的 depth（按层计数）', () => {
+            const depths: number[] = []
+            breadthFirst(tree, (node, { depth }) => {
+                depths.push(depth)
+            })
+            // 预期深度：
+            // root(0), a(1), b(1), c(1), a1(2), a2(2), b1(2), a2x(3)
+            expect(depths).toEqual([0, 1, 1, 1, 2, 2, 2, 3])
+        })
+
+        it('应提供正确的 parent（根节点 parent 为 null）', () => {
+            const parents: (string | null)[] = []
+            breadthFirst(tree, (node, { parent }) => {
+                parents.push(parent ? (parent.id as string) : null)
+            })
+            expect(parents).toEqual([
+                null, // root
+                'root', // a
+                'root', // b
+                'root', // c
+                'a', // a1
+                'a', // a2
+                'b', // b1
+                'a2', // a2x
+            ])
+        })
+
+        it('应提供正确的 path（从根到当前节点的节点数组）', () => {
+            const paths: string[][] = []
+            breadthFirst(tree, (node, { path }) => {
+                paths.push(path.map((n) => n.id as string))
+            })
+            expect(paths).toEqual([
+                ['root'],
+                ['root', 'a'],
+                ['root', 'b'],
+                ['root', 'c'],
+                ['root', 'a', 'a1'],
+                ['root', 'a', 'a2'],
+                ['root', 'b', 'b1'],
+                ['root', 'a', 'a2', 'a2x'],
+            ])
+        })
+
+        it('在森林中，每个根节点的 path 应只包含自身', () => {
+            const forest: TreeNode[] = [
+                { id: 'r1', children: [{ id: 'r1c1' }] },
+                { id: 'r2' },
+            ]
+            const paths: string[][] = []
+            breadthFirst(forest, (node, { path }) => {
+                paths.push(path.map((n) => n.id as string))
+            })
+            expect(paths).toEqual([['r1'], ['r2'], ['r1', 'r1c1']])
+        })
+    })
+
+    describe('边缘情况', () => {
+        it('空树（空数组）不应调用回调', () => {
             const callback = jest.fn()
             breadthFirst([], callback)
             expect(callback).not.toHaveBeenCalled()
         })
 
-        it('应该处理 null 或 undefined 输入（假设 ensureArray 将其转为空数组）', () => {
+        it('传入 null 或 undefined 应视为空树（由 ensureArray 处理）', () => {
+            // 假设 ensureArray 将 null/undefined 转换为空数组
             const callback = jest.fn()
-            // 假设 ensureArray(null) 返回 []，因此不调用回调
             breadthFirst(null as any, callback)
+            expect(callback).not.toHaveBeenCalled()
+
             breadthFirst(undefined as any, callback)
             expect(callback).not.toHaveBeenCalled()
         })
 
-        it('应该跳过没有 children 字段的节点', () => {
-            const tree = { id: 'root' }
-            const callback = jest.fn()
-            breadthFirst(tree, callback)
-            expect(callback).toHaveBeenCalledTimes(1)
-            expect(callback).toHaveBeenCalledWith(tree)
-        })
-
-        it('应该跳过 children 字段不是数组的节点', () => {
-            const tree = {
+        it('节点 children 字段为非数组时（如对象或字符串）应被忽略', () => {
+            const weirdTree: TreeNode = {
                 id: 'root',
-                children: 'not an array' as any,
+                children: 'not an array' as any, // 强制为非数组
+                extra: { id: 'child' }, // 不会作为子节点
             }
-            const callback = jest.fn()
-            breadthFirst(tree, callback)
-            expect(callback).toHaveBeenCalledTimes(1)
-            // 不会尝试遍历 children
-        })
-
-        it('应该正确处理 children 字段为 null 的情况', () => {
-            const tree = {
-                id: 'root',
-                children: null,
-            }
-            const callback = jest.fn()
-            breadthFirst(tree, callback)
-            expect(callback).toHaveBeenCalledTimes(1)
-        })
-
-        it('应该正确处理嵌套的空 children 数组', () => {
-            const tree = {
-                id: 'root',
-                children: [
-                    { id: 'child1', children: [] },
-                    { id: 'child2' }, // 无 children 字段
-                ],
-            }
-            const callback = jest.fn()
-            breadthFirst(tree, callback)
-            expect(callback).toHaveBeenCalledTimes(3)
-            expect(callback.mock.calls.map((c) => c[0].id)).toEqual([
-                'root',
-                'child1',
-                'child2',
-            ])
-        })
-
-        it('应该处理循环引用（不会无限循环，因为不会检查是否访问过）', () => {
-            // 注意：当前实现不检查循环引用，如果存在循环引用会导致无限循环。
-            // 但作为工具库，通常假设输入是无环的。这里不测试无限循环，仅测试代码不会因循环而立即崩溃。
-            // 如果需要防止循环，可以添加 visited 集合，但当前函数没有。
-            // 因此跳过此测试或标记为待实现。
-        })
-    })
-
-    describe('多个 options 同时使用', () => {
-        it('应该同时处理 childrenKey 和森林', () => {
-            const forest = [
-                { id: 'root1', subs: [{ id: 'child1' }] },
-                { id: 'root2', subs: [] },
-            ]
-            const callback = jest.fn()
-            breadthFirst(forest, callback, { childrenKey: 'subs' })
-            expect(callback).toHaveBeenCalledTimes(3)
-            expect(callback.mock.calls.map((c) => c[0].id)).toEqual([
-                'root1',
-                'root2',
-                'child1',
-            ])
-        })
-    })
-
-    describe('回调函数行为', () => {
-        it('应该将节点作为参数传递给回调', () => {
-            const node = { id: 'test' }
-            const callback = jest.fn()
-            breadthFirst(node, callback)
-            expect(callback).toHaveBeenCalledWith(node)
-        })
-
-        it('应该按照 BFS 顺序依次调用回调', () => {
-            const tree = createTree()
-            const order: string[] = []
-            breadthFirst(tree, (node) => order.push(node.id))
-            expect(order).toEqual(expectedOrder)
-        })
-
-        it('回调函数中修改节点不影响遍历（因为节点是对象引用）', () => {
-            const tree = { id: 'root', children: [{ id: 'child' }] }
-            const callback = jest.fn((node) => {
-                node.id = 'modified'
+            const visited: string[] = []
+            breadthFirst(weirdTree, (node) => {
+                visited.push(node.id as string)
             })
-            breadthFirst(tree, callback)
-            expect(tree.id).toBe('modified') // 由于直接修改了原节点
-            // 但遍历仍会继续，因为队列中存的是引用
-            expect(callback).toHaveBeenCalledTimes(2)
+            expect(visited).toEqual(['root']) // 只有根节点
+        })
+
+        it('节点 children 字段为 undefined 时正常遍历', () => {
+            const nodeWithoutChildren: TreeNode = { id: 'leaf' }
+            const visited: string[] = []
+            breadthFirst(nodeWithoutChildren, (node) => {
+                visited.push(node.id as string)
+            })
+            expect(visited).toEqual(['leaf'])
+        })
+
+        it('应正确处理深层嵌套和大数量节点（不崩溃）', () => {
+            // 生成一个简单的深层树（链式）
+            const deepChain: TreeNode = { id: '0' }
+            let current = deepChain
+            for (let i = 1; i < 1000; i++) {
+                const next = { id: String(i) }
+                current.children = [next]
+                current = next
+            }
+            const visited: string[] = []
+            breadthFirst(deepChain, (node) => {
+                visited.push(node.id as string)
+            })
+            expect(visited.length).toBe(1000)
+            expect(visited[0]).toBe('0')
+            expect(visited[999]).toBe('999')
         })
     })
 
-    describe('类型推导', () => {
-        // 如果使用 TypeScript，可以测试类型，但 Jest 测试中无法直接测试类型。
-        // 这里仅作为占位，确保代码在 TypeScript 下能正确编译。
+    describe('选项默认值', () => {
+        it('不传递 options 时，默认 childrenKey = "children"', () => {
+            const tree: TreeNode = {
+                id: 'root',
+                children: [{ id: 'child' }],
+            }
+            const { order } = collectTraversal(tree) // 无 options
+            expect(order).toEqual(['root', 'child'])
+        })
+    })
+
+    describe('回调返回值', () => {
+        it('回调返回 undefined 或 true 应继续遍历', () => {
+            const visited: string[] = []
+            const callback = (node: TreeNode) => {
+                visited.push(node.id as string)
+                return undefined // 或 true，但函数签名期望 void 或 boolean，void 相当于返回 undefined
+            }
+            breadthFirst(tree, callback)
+            expect(visited.length).toBe(8) // 所有节点都被访问
+        })
+
+        it('回调显式返回 true 也应继续遍历（因为函数期望返回 false 才停止）', () => {
+            const visited: string[] = []
+            const callback = (node: TreeNode) => {
+                visited.push(node.id as string)
+                return true as any // 强制返回 true，但不应该停止
+            }
+            breadthFirst(tree, callback)
+            expect(visited.length).toBe(8)
+        })
+    })
+
+    describe('复杂树结构', () => {
+        const complexTree: TreeNode = {
+            id: '1',
+            children: [
+                { id: '1.1', children: [{ id: '1.1.1' }] },
+                {
+                    id: '1.2',
+                    children: [
+                        { id: '1.2.1' },
+                        { id: '1.2.2', children: [{ id: '1.2.2.1' }] },
+                    ],
+                },
+                { id: '1.3' },
+            ],
+        }
+
+        it('应正确遍历复杂树结构', () => {
+            const { order } = collectTraversal(complexTree)
+            // 预期：
+            // 1
+            // 1.1, 1.2, 1.3
+            // 1.1.1, 1.2.1, 1.2.2
+            // 1.2.2.1
+            expect(order).toEqual([
+                '1',
+                '1.1',
+                '1.2',
+                '1.3',
+                '1.1.1',
+                '1.2.1',
+                '1.2.2',
+                '1.2.2.1',
+            ])
+        })
     })
 })

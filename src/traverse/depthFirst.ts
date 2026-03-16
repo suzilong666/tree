@@ -1,12 +1,12 @@
 // src/traverse/depthFirst.ts
-import { TraversalContext, TreeNode, TreeOptions } from '../types/tree'
+import { TraversalContext, TreeNode, DepthFirstOptions } from '../types/tree'
 import { DEFAULT_CHILDREN_KEY } from '../constants/index'
 import { ensureArray } from '../utils/array'
 
 export function depthFirst(
     tree: TreeNode | TreeNode[],
     callback: (node: TreeNode, context: TraversalContext) => void | boolean,
-    options: TreeOptions = {}
+    options: DepthFirstOptions = {}
 ): void {
     const { childrenKey = DEFAULT_CHILDREN_KEY } = options
     const order = options.order === 'post' ? 'post' : 'pre'
