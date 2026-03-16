@@ -1,5 +1,5 @@
 import { findAll } from '../findAll'
-import { TreeNode } from '../../types/tree'
+import { TreeNode } from '../../types'
 
 describe('findAll 查找所有匹配节点', () => {
     // 测试树结构（使用 id 标识节点）

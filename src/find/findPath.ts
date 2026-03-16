@@ -1,4 +1,4 @@
-import { TreeNode, FindOptions } from '../types/tree'
+import { TreeNode, FindOptions } from '../types'
 import { breadthFirst, depthFirst } from '../traverse'
 
 /**

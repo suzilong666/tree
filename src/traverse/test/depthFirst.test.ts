@@ -1,4 +1,4 @@
-import { TreeNode } from '../../types/tree'
+import { TreeNode } from '../../types'
 import { depthFirst } from '../depthFirst'
 
 describe('depthFirst 深度优先遍历', () => {

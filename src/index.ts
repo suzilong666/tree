@@ -1,10 +1,13 @@
-export * as traverse from './traverse/index'
 import * as traverse from './traverse/index'
-
-export * as find from './find/index'
 import * as find from './find/index'
+import * as transform from './transform/index'
 
-export default {
+const tree = {
     ...traverse,
     ...find,
+    ...transform,
 }
+
+export default tree
+
+export type * from './types'

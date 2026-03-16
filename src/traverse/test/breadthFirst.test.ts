@@ -1,5 +1,5 @@
 import { breadthFirst } from '../breadthFirst' // 根据实际路径调整
-import { TreeNode, TraversalContext } from '../../types/tree' // 根据实际路径调整
+import { TreeNode, TraversalContext } from '../../types' // 根据实际路径调整
 
 describe('breadthFirst 广度优先遍历', () => {
     // 辅助函数：收集遍历过程中的节点 ID 和上下文

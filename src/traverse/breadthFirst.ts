@@ -1,4 +1,4 @@
-import { BaseOptions, TraversalContext, TreeNode } from '../types/tree'
+import { BaseOptions, TraversalContext, TreeNode } from '../types'
 import { DEFAULT_CHILDREN_KEY } from '../constants/index'
 import { ensureArray } from '../utils/array'
 

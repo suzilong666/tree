@@ -1,5 +1,5 @@
 // src/traverse/depthFirst.ts
-import { TraversalContext, TreeNode, DepthFirstOptions } from '../types/tree'
+import { TraversalContext, TreeNode, DepthFirstOptions } from '../types'
 import { DEFAULT_CHILDREN_KEY } from '../constants/index'
 import { ensureArray } from '../utils/array'
 

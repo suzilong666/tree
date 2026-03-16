@@ -1,5 +1,5 @@
 import { findPath } from '../findPath'
-import { TreeNode } from '../../types/tree'
+import { TreeNode } from '../../types'
 
 describe('findPath 查找节点路径', () => {
     // 测试树结构（使用 id 标识节点）
