@@ -49,7 +49,7 @@ describe('find 查找节点', () => {
 
         it('应返回第一个满足条件的节点（深度优先前序）', () => {
             // 多个节点 id 包含 'a'，按 dfs pre 顺序第一个是 'a'
-            const node = find(tree, (n) => n.id.includes('a'))
+            const node = find(tree, (n) => String(n.id).includes('a'))
             expect(node?.id).toBe('a')
         })
     })
@@ -60,21 +60,29 @@ describe('find 查找节点', () => {
         // 这样就有差异了。
 
         it('策略 dfs 应使用深度优先查找第一个节点', () => {
-            const node = find(diffTree2, (n) => n.id.includes('Target'), {
-                strategy: 'dfs',
-            })
+            const node = find(
+                diffTree2,
+                (n) => String(n.id).includes('Target'),
+                {
+                    strategy: 'dfs',
+                }
+            )
             expect(node?.id).toBe('deepTarget')
         })
 
         it('策略 bfs 应使用广度优先查找第一个节点', () => {
-            const node = find(diffTree2, (n) => n.id.includes('Target'), {
-                strategy: 'bfs',
-            })
+            const node = find(
+                diffTree2,
+                (n) => String(n.id).includes('Target'),
+                {
+                    strategy: 'bfs',
+                }
+            )
             expect(node?.id).toBe('shallowTarget')
         })
 
         it('默认策略应为 dfs', () => {
-            const node = find(diffTree2, (n) => n.id.includes('Target')) // 无 strategy 选项
+            const node = find(diffTree2, (n) => String(n.id).includes('Target')) // 无 strategy 选项
             expect(node?.id).toBe('deepTarget')
         })
     })
@@ -142,17 +150,25 @@ describe('find 查找节点', () => {
 
         it('当策略为 bfs 时，order 选项应被忽略（不影响结果）', () => {
             // bfs 无视 order，我们确保调用不会出错，且结果与 bfs 一致
-            const nodePre = find(diffTree2, (n) => n.id.includes('Target'), {
-                strategy: 'bfs',
-                order: 'pre',
-            })
-            const nodePost = find(diffTree2, (n) => n.id.includes('Target'), {
-                strategy: 'bfs',
-                order: 'post',
-            })
+            const nodePre = find(
+                diffTree2,
+                (n) => String(n.id).includes('Target'),
+                {
+                    strategy: 'bfs',
+                    order: 'pre',
+                }
+            )
+            const nodePost = find(
+                diffTree2,
+                (n) => String(n.id).includes('Target'),
+                {
+                    strategy: 'bfs',
+                    order: 'post',
+                }
+            )
             const nodeDefault = find(
                 diffTree2,
-                (n) => n.id.includes('Target'),
+                (n) => String(n.id).includes('Target'),
                 { strategy: 'bfs' }
             )
             expect(nodePre?.id).toBe('shallowTarget')
@@ -201,7 +217,7 @@ describe('find 查找节点', () => {
             ]
             // dfs 先访问 r1，所以找到 target1；bfs 也是先访问 r1，所以也找到 target1。为了让差异，让 r1 没有满足条件，但子节点有。
             // 略，主要测试能找到即可。
-            const node = find(forest2, (n) => n.id.startsWith('target'))
+            const node = find(forest2, (n) => String(n.id).startsWith('target'))
             expect(node?.id).toBe('target1')
         })
     })

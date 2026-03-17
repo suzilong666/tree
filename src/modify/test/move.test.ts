@@ -192,7 +192,7 @@ describe('move 移动节点', () => {
                 (n) => n.id === 2 || n.id === 5, // 匹配两个，但只移动第一个（id=2）
                 (n) => n.id === 4,
                 'append'
-            )
+            ) as TreeNode[]
             expect(newForest[0].children.map((c: any) => c.id)).toEqual([3]) // id=2 被移除
             expect(newForest[1].children.map((c: any) => c.id)).toEqual([5, 2]) // id=5 没动
         })

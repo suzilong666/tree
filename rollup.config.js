@@ -12,6 +12,10 @@ export default {
         { file: pkg.main, format: 'cjs', sourcemap: true },
         { file: pkg.module, format: 'es', sourcemap: true },
     ],
-    plugins: [typescript()],
+    plugins: [
+        typescript({
+            exclude: ['**/*.test.ts', '**/*.spec.ts'], // 排除测试文件
+        }),
+    ],
     external: Object.keys(pkg.dependencies || {}),
 }

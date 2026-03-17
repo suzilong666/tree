@@ -83,7 +83,7 @@ describe('insertBefore 在节点前插入兄弟', () => {
             forest,
             (node) => node.id === 2 || node.id === 5,
             newNode
-        )
+        ) as TreeNode[]
 
         expect(newForest).not.toBe(forest)
         expect(newForest[0].children).toEqual([{ id: 6 }, { id: 2 }, { id: 3 }]) // 第一个匹配被修改

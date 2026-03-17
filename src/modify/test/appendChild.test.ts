@@ -27,7 +27,7 @@ describe('appendChild 追加子节点（只操作第一个匹配）', () => {
             { id: 5, name: 'new' },
         ])
         // 验证原树未被修改
-        expect(originalTree.children[0].children).toEqual([
+        expect(originalTree!.children![0].children).toEqual([
             { id: 4, name: 'a1' },
         ])
     })
@@ -89,7 +89,7 @@ describe('appendChild 追加子节点（只操作第一个匹配）', () => {
             forest,
             (node) => node.id === 1 || node.id === 3,
             newNode
-        )
+        ) as TreeNode[]
 
         expect(newForest).not.toBe(forest)
         expect(newForest[0].children).toEqual([{ id: 2 }, { id: 5 }]) // 第一个匹配被修改
