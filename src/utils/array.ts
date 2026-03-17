@@ -10,3 +10,12 @@ export function ensureArray<T>(value: T | T[]): T[] {
     }
     return Array.isArray(value) ? value : [value]
 }
+
+/**
+ * 检查数组是否为空或不是数组。
+ * @param arr
+ * @returns
+ */
+export function isEmpty(arr: unknown): boolean {
+    return !Array.isArray(arr) || arr.length === 0
+}

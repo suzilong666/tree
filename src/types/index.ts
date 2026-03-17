@@ -8,7 +8,8 @@ export type TreeNode<T = unknown, ChildKey extends string = 'children'> = {
     [K in ChildKey]?: TreeNode<T, ChildKey>[] // 动态子节点字段
 }
 
-export interface TraversalContext {
+export interface Context {
+    index: number // 当前节点在兄弟节点中的位置（从 0 开始）
     depth: number // 当前节点深度（根节点为 0）
     parent: TreeNode | null // 父节点，根节点为 null
     path: TreeNode[] // 从根到当前节点的路径

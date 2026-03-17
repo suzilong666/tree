@@ -176,7 +176,6 @@ describe('filter 过滤树（标准语义：只保留满足条件的节点及其
         it('节点有 children 但 childrenKey 指定的字段不存在时视为无子节点', () => {
             const node = { id: 1, subs: [{ id: 2 }] } // 默认 childrenKey 是 'children'
             const filtered = filter(node, (n) => n.id === 1)
-            console.log('Filtered node:', filtered)
             // 节点 1 满足，但子节点不被视为 children，所以结果只有节点 1，且没有 children 字段
             expect(filtered).toEqual({ id: 1, subs: [{ id: 2 }] })
         })

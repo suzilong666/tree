@@ -1,5 +1,5 @@
 import { breadthFirst } from '../breadthFirst' // 根据实际路径调整
-import { TreeNode, TraversalContext } from '../../types' // 根据实际路径调整
+import { TreeNode, Context } from '../../types' // 根据实际路径调整
 
 describe('breadthFirst 广度优先遍历', () => {
     // 辅助函数：收集遍历过程中的节点 ID 和上下文
@@ -8,8 +8,8 @@ describe('breadthFirst 广度优先遍历', () => {
         options?: Parameters<typeof breadthFirst>[2]
     ) => {
         const order: string[] = []
-        const contexts: TraversalContext[] = []
-        const callback = (node: TreeNode, context: TraversalContext) => {
+        const contexts: Context[] = []
+        const callback = (node: TreeNode, context: Context) => {
             order.push(node.id as string)
             contexts.push({ ...context }) // 浅拷贝，避免后续修改影响
         }

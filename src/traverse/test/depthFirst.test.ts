@@ -57,6 +57,7 @@ describe('depthFirst 深度优先遍历', () => {
             expect(callback).toHaveBeenCalledTimes(1)
             expect(callback).toHaveBeenCalledWith(node, {
                 depth: 0,
+                index: 0,
                 parent: null,
                 path: [node],
             })
@@ -97,6 +98,7 @@ describe('depthFirst 深度优先遍历', () => {
             expect(callback).toHaveBeenCalledTimes(1)
             expect(callback).toHaveBeenCalledWith(node, {
                 depth: 0,
+                index: 0,
                 parent: null,
                 path: [node],
             })

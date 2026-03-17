@@ -16,7 +16,8 @@
         "resolveJsonModule": true,
         "isolatedModules": true, // 确保每个文件都可以被独立编译，与Rollup配合良好
         "importHelpers": true, // 使用 tslib 减少重复代码
-        "noEmit": true // 如果使用Rollup编译，可以禁止tsc输出，避免冲突
+        "noEmit": true, // 如果使用Rollup编译，可以禁止tsc输出，避免冲突
+        "downlevelIteration": true // 支持在ES5中使用迭代器和生成器
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "dist"]
