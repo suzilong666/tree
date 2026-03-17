@@ -1,6 +1,6 @@
 {
     "name": "@suzilong/tree",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "功能全面的树操作库，提供树的遍历、搜索、修改等功能，适用于浏览器和node.js等环境。",
     "homepage": "https://github.com/suzilong666/tree#readme",
     "bugs": {
