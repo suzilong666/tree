@@ -1,7 +1,7 @@
 {
-    "name": "tree",
+    "name": "@suzilong/tree",
     "version": "1.0.0",
-    "description": "",
+    "description": "功能全面的树操作库，提供树的遍历、搜索、修改等功能，适用于浏览器和node.js等环境。",
     "homepage": "https://github.com/suzilong666/tree#readme",
     "bugs": {
         "url": "https://github.com/suzilong666/tree/issues"
@@ -10,14 +10,22 @@
         "type": "git",
         "url": "git+https://github.com/suzilong666/tree.git"
     },
-    "license": "ISC",
-    "author": "",
+    "license": "MIT",
+    "keywords": [
+        "tree"
+    ],
+    "author": "苏子龙",
     "type": "module",
     "main": "dist/index.js",
     "module": "dist/index.es.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
     "scripts": {
         "dev": "vite",
-        "build": "rollup -c",
+        "build": "npm run clean && rollup -c",
+        "clean": "rimraf dist",
         "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
         "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
         "format": "prettier --write .",
@@ -28,6 +36,7 @@
         "test:coverage": "jest --coverage"
     },
     "devDependencies": {
+        "@rollup/plugin-terser": "^1.0.0",
         "@types/jest": "^30.0.0",
         "eslint": "^10.0.3",
         "eslint-config-prettier": "^10.1.8",
@@ -37,6 +46,7 @@
         "jest": "^30.3.0",
         "lint-staged": "^16.3.3",
         "prettier": "^3.8.1",
+        "rimraf": "^6.1.3",
         "rollup": "^4.59.0",
         "rollup-plugin-typescript2": "^0.36.0",
         "ts-jest": "^29.4.6",

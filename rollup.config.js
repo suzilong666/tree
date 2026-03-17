@@ -1,5 +1,6 @@
 import fs from 'fs'
 import typescript from 'rollup-plugin-typescript2'
+import terser from '@rollup/plugin-terser'
 
 // 使用 import.meta.url 构建正确的文件路径
 const pkg = JSON.parse(
@@ -15,6 +16,16 @@ export default {
     plugins: [
         typescript({
             exclude: ['**/*.test.ts', '**/*.spec.ts'], // 排除测试文件
+        }),
+        terser({
+            compress: {
+                drop_console: true, // 移除 console.log
+                drop_debugger: true,
+                pure_funcs: ['console.log'], // 移除指定函数
+            },
+            output: {
+                comments: false, // 移除注释
+            },
         }),
     ],
     external: Object.keys(pkg.dependencies || {}),
