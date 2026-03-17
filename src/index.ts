@@ -16,4 +16,12 @@ const tree = {
 
 export default tree
 
+// 命名导出：让用户按需导入
+export * from './find/index'
+export * from './modify/index'
+export * from './orther/index'
+export * from './query/index'
+export * from './transform/index'
+export * from './traverse/index'
+
 export type * from './types'
