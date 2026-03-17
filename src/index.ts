@@ -1,13 +1,17 @@
-import * as traverse from './traverse/index'
 import * as find from './find/index'
-import * as transform from './transform/index'
+import * as modify from './modify/index'
+import * as orther from './orther/index'
 import * as query from './query/index'
+import * as transform from './transform/index'
+import * as traverse from './traverse/index'
 
 const tree = {
-    ...traverse,
     ...find,
-    ...transform,
+    ...modify,
+    ...orther,
     ...query,
+    ...transform,
+    ...traverse,
 }
 
 export default tree
