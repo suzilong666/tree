@@ -12,6 +12,12 @@ export default {
     output: [
         { file: pkg.main, format: 'cjs', sourcemap: true },
         { file: pkg.module, format: 'es', sourcemap: true },
+        {
+            file: 'dist/index.umd.js',
+            format: 'umd',
+            name: 'Tree', // 全局变量名
+            sourcemap: true,
+        },
     ],
     plugins: [
         typescript({
