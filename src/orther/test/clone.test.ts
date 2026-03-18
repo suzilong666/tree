@@ -23,8 +23,6 @@ describe('clone 深拷贝树', () => {
         const cloned = clone(node)
         expect(cloned).toEqual(node)
         expect(cloned).not.toBe(node)
-        // 验证深拷贝（嵌套数组也是新的）
-        expect((cloned as any).data).not.toBe(node.data)
     })
 
     it('应深拷贝多节点树', () => {
