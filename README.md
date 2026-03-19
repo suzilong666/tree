@@ -24,8 +24,8 @@ pnpm i @suzilong/tree
 使用示例
 
 #### Es Module
-```js
 
+```js
 import { forEach } from '@suzilong/tree'
 
 forEach(tree, (node) => {
@@ -49,11 +49,11 @@ forEach(tree, (node) => {
 <script src="https://unpkg.com/@suzilong/tree"></script>
 
 <script>
-const { forEach } = window.Tree
+    const { forEach } = window.Tree
 
-forEach(tree, (node) => {
-    console.log(node)
-})
+    forEach(tree, (node) => {
+        console.log(node)
+    })
 </script>
 ```
 
@@ -95,6 +95,7 @@ forEach(tree, (node) => {
     - [clone](#clone)
     - [every](#every)
     - [some](#some)
+    - [print](#print)
 - [类型定义](#类型定义)
 
 ---
@@ -1089,6 +1090,37 @@ console.log(hasChild) // 输出: true
 
 const hasLeaf = some(tree, (node) => node.id === '999')
 console.log(hasLeaf) // 输出: false
+```
+
+#### print
+
+**功能**：在控制台打印tree，用于调试，打印结果类似Linux tree命令
+
+**参数**：
+
+- `tree`: TreeNode | TreeNode[] - 树或森林
+- `options`: Options - 配置选项
+    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+
+**返回值**：无
+
+**示例**：
+
+```js
+import { print } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    type: 'parent',
+    children: [
+        {
+            id: '1-1',
+            type: 'child',
+        },
+    ],
+}
+
+print(tree, { childrenKey: 'children' })
 ```
 
 ## 类型定义
