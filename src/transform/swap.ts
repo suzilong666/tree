@@ -1,15 +1,8 @@
+// modify/swap.ts
 import { TreeNode, BaseOptions } from '../types'
 import { DEFAULT_CHILDREN_KEY } from '../constants'
 import { findPath } from '../find/findPath'
 
-/**
- * 交换树中两个节点的位置（包括它们的整个子树）
- * @param tree 原树或森林
- * @param predicateA 定位第一个节点的断言函数
- * @param predicateB 定位第二个节点的断言函数
- * @param options 配置选项
- * @returns 新树（如果任一节点不存在或交换无效，则返回原树）
- */
 export function swap(
     tree: TreeNode | TreeNode[],
     predicateA: (node: TreeNode) => boolean,
@@ -18,65 +11,127 @@ export function swap(
 ): TreeNode | TreeNode[] {
     const { childrenKey = DEFAULT_CHILDREN_KEY } = options
 
-    // 1. 获取两个节点的路径
+    // 获取路径
     const pathA = findPath(tree, predicateA, { childrenKey })
     const pathB = findPath(tree, predicateB, { childrenKey })
-
-    if (pathA.length === 0 || pathB.length === 0) {
-        return tree // 任一节点不存在
-    }
-
+    if (pathA.length === 0 || pathB.length === 0) return tree
     const nodeA = pathA[pathA.length - 1]
     const nodeB = pathB[pathB.length - 1]
+    if (nodeA === nodeB) return tree
 
-    if (nodeA === nodeB) {
-        return tree
-    }
-
-    // 2. 检查是否互为祖先-后代
+    // 检查祖先关系
     const isAncestor = (ancestor: TreeNode, descendant: TreeNode): boolean => {
         const stack = [ancestor]
         while (stack.length) {
             const current = stack.pop()!
             if (current === descendant) return true
             const children = current[childrenKey]
-            if (Array.isArray(children)) {
-                stack.push(...children)
-            }
+            if (Array.isArray(children)) stack.push(...children)
         }
         return false
     }
-    if (isAncestor(nodeA, nodeB) || isAncestor(nodeB, nodeA)) {
-        return tree
-    }
+    if (isAncestor(nodeA, nodeB) || isAncestor(nodeB, nodeA)) return tree
 
-    // 3. 递归构建新树，并在遇到 nodeA 或 nodeB 时交换
-    const buildNode = (node: TreeNode): TreeNode => {
-        // 如果当前节点是需要交换的节点之一，直接返回另一个节点（但需要递归处理子节点吗？不，因为交换的是整个子树，所以直接返回另一个节点，其子树保持不变）
-        if (node === nodeA) {
-            // 直接返回 nodeB 的克隆，但 nodeB 可能尚未被构建，我们需要先构建 nodeB 的子树
-            // 这里递归调用 buildNode 来构建 nodeB 的子树
-            return buildNode(nodeB)
-        }
-        if (node === nodeB) {
-            return buildNode(nodeA)
-        }
-
-        // 普通节点：浅拷贝，递归处理子节点
-        const newNode = { ...node }
+    // 深拷贝
+    const cloneMap = new WeakMap<TreeNode, TreeNode>()
+    const cloneNode = (node: TreeNode): TreeNode => {
+        const cloned = { ...node }
+        cloneMap.set(node, cloned)
         const children = node[childrenKey]
         if (Array.isArray(children)) {
-            newNode[childrenKey] = children.map((child) => buildNode(child))
+            cloned[childrenKey] = children.map((child) => cloneNode(child))
         } else {
-            delete newNode[childrenKey]
+            delete cloned[childrenKey]
         }
-        return newNode
+        return cloned
     }
 
-    // 4. 处理森林
-    if (Array.isArray(tree)) {
-        return tree.map((root) => buildNode(root))
-    } else {
-        return buildNode(tree)
+    const clonedTree = Array.isArray(tree)
+        ? tree.map((root) => cloneNode(root))
+        : cloneNode(tree)
+    const clonedNodeA = cloneMap.get(nodeA)
+    const clonedNodeB = cloneMap.get(nodeB)
+    if (!clonedNodeA || !clonedNodeB) return tree
+
+    // 处理根节点交换（森林中的两个根）
+    if (Array.isArray(tree) && pathA.length === 1 && pathB.length === 1) {
+        const forest = clonedTree as TreeNode[]
+        const indexA = forest.indexOf(clonedNodeA)
+        const indexB = forest.indexOf(clonedNodeB)
+        if (indexA !== -1 && indexB !== -1) {
+            ;[forest[indexA], forest[indexB]] = [forest[indexB], forest[indexA]]
+            return forest
+        }
     }
+
+    // 获取父节点
+    const getParentInCloned = (nodeInOriginal: TreeNode): TreeNode | null => {
+        const path = findPath(tree, (n) => n === nodeInOriginal, {
+            childrenKey,
+        })
+        if (path.length <= 1) return null
+        const originalParent = path[path.length - 2]
+        return cloneMap.get(originalParent) || null
+    }
+    const parentA = getParentInCloned(nodeA)
+    const parentB = getParentInCloned(nodeB)
+
+    // 同一父节点，直接交换 children 数组位置
+    if (parentA === parentB && parentA) {
+        const children = parentA[childrenKey] as TreeNode[]
+        const indexA = children.indexOf(clonedNodeA)
+        const indexB = children.indexOf(clonedNodeB)
+        if (indexA !== -1 && indexB !== -1) {
+            ;[children[indexA], children[indexB]] = [
+                children[indexB],
+                children[indexA],
+            ]
+            return clonedTree
+        }
+    }
+
+    // 不同父节点
+    const getOriginalIndex = (
+        parent: TreeNode | null,
+        child: TreeNode
+    ): number => {
+        if (!parent) return -1
+        const children = parent[childrenKey]
+        if (!Array.isArray(children)) return -1
+        return children.indexOf(child)
+    }
+    const indexA = parentA ? getOriginalIndex(parentA, nodeA) : -1
+    const indexB = parentB ? getOriginalIndex(parentB, nodeB) : -1
+
+    const removeFromParent = (parent: TreeNode | null, child: TreeNode) => {
+        if (!parent) return
+        const children = parent[childrenKey]
+        if (!Array.isArray(children)) return
+        const idx = children.indexOf(child)
+        if (idx !== -1) children.splice(idx, 1)
+    }
+    removeFromParent(parentA, clonedNodeA)
+    removeFromParent(parentB, clonedNodeB)
+
+    const insertAt = (
+        parent: TreeNode | null,
+        child: TreeNode,
+        idx: number
+    ) => {
+        if (!parent) return
+        let children = parent[childrenKey]
+        if (!Array.isArray(children)) {
+            children = []
+            parent[childrenKey] = children
+        }
+        if (idx >= 0 && idx <= children.length) {
+            children.splice(idx, 0, child)
+        } else {
+            children.push(child)
+        }
+    }
+    insertAt(parentB, clonedNodeA, indexA)
+    insertAt(parentA, clonedNodeB, indexB)
+
+    return clonedTree
 }
