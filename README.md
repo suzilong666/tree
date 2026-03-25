@@ -1,29 +1,31 @@
 # tree
 
-一个现代、轻量的 TS 树操作库，涵盖遍历（深度优先前序/后序、广度优先）、查找、转换、查询与修改等核心需求。纯函数设计确保数据不可变，支持自定义子节点字段，零依赖且类型完备，浏览器与 Node.js 均可使用。
+A modern, lightweight TypeScript tree manipulation library that covers core requirements such as traversal (depth-first pre-order/post-order, breadth-first), searching, transformation, querying, and modification. Pure function design ensures immutable data, supports custom child node fields, has zero dependencies, and is fully typed, usable in both browsers and Node.js.
 
-## 特性
+[中文版本 (Chinese Version)](README.zh.md)
 
-- 🚀 全面：涵盖树操作的常见场景
-- 🔒 不可变：函数式编程，无副作用
-- 🎯 灵活：支持自定义子节点字段名、遍历策略（DFS/BFS）和遍历顺序（前序，后序）
-- 📦 轻量：无依赖，体积小巧（gzip后仅~3K），支持Tree-shaking
-- 🌲 支持森林：可以处理多根节点的树（森林）
-- 🛡️ 健壮：纯 TypeScript 编写，类型安全，测试用例覆盖全面
+## Features
 
-## 安装
+- 🚀 Comprehensive: Covers common tree operation scenarios
+- 🔒 Immutable: Functional programming with no side effects
+- 🎯 Flexible: Supports custom child node field names, traversal strategies (DFS/BFS), and traversal orders (pre-order, post-order)
+- 📦 Lightweight: Zero dependencies, small size (~3K gzipped), supports Tree-shaking
+- 🌲 Forest Support: Can handle trees with multiple root nodes (forests)
+- 🛡️ Robust: Pure TypeScript implementation, type-safe, comprehensive test coverage
+
+## Installation
 
 ```bash
 npm i @suzilong/tree
-# 或
+# or
 yarn add @suzilong/tree
-# 或
+# or
 pnpm i @suzilong/tree
 ```
 
-使用示例
+Usage Examples
 
-#### Es Module
+#### ES Module
 
 ```js
 import { forEach } from '@suzilong/tree'
@@ -43,7 +45,7 @@ forEach(tree, (node) => {
 })
 ```
 
-#### 直接在浏览器中使用
+#### Directly in Browser
 
 ```html
 <script src="https://unpkg.com/@suzilong/tree"></script>
@@ -57,19 +59,19 @@ forEach(tree, (node) => {
 </script>
 ```
 
-## API 文档
+## API Documentation
 
-### 目录
+### Table of Contents
 
-- [1. 遍历 (traverse)](#1-遍历-traverse)
+- [1. Traversal (traverse)](#1-traversal-traverse)
     - [forEach](#foreach)
     - [depthFirst](#depthfirst)
     - [breadthFirst](#breadthfirst)
-- [2. 查找 (find)](#2-查找-find)
+- [2. Search (find)](#2-search-find)
     - [find](#find)
     - [findAll](#findall)
     - [findPath](#findpath)
-- [3. 修改 (modify)](#3-修改-modify)
+- [3. Modification (modify)](#3-modification-modify)
     - [appendChild](#appendchild)
     - [prependChild](#prependchild)
     - [insertBefore](#insertbefore)
@@ -77,45 +79,45 @@ forEach(tree, (node) => {
     - [remove](#remove)
     - [replace](#replace)
     - [move](#move)
-- [4. 转换 (transform)](#4-转换-transform)
+- [4. Transformation (transform)](#4-transformation-transform)
     - [arrayToTree](#arraytotree)
     - [treeToArray](#treearrayto)
     - [map](#map)
     - [filter](#filter)
     - [reduce](#reduce)
     - [flat](#flat)
-- [5. 查询 (query)](#5-查询-query)
+- [5. Query (query)](#5-query-query)
     - [getCount](#getcount)
     - [getLeafCount](#getleafcount)
     - [getDepth](#getdepth)
     - [getAncestors](#getancestors)
     - [getDescendants](#getdescendants)
     - [getSiblings](#getsiblings)
-- [6. 其他 (orther)](#6-其他-orther)
+- [6. Other (other)](#6-other-other)
     - [clone](#clone)
     - [every](#every)
     - [some](#some)
     - [print](#print)
-- [类型定义](#类型定义)
+- [Type Definitions](#type-definitions)
 
 ---
 
-### 1. 遍历 (traverse)
+### 1. Traversal (traverse)
 
 #### forEach
 
-**功能**：对树中的每个节点执行一次给定的函数（无返回值，不中断）
+**Function**: Executes a given function once for each node in the tree (no return value, no interruption)
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `callback`: (node: TreeNode, context: Context) => void - 对每个节点执行的函数
-- `options`: Options - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
-    - `strategy`: 'dfs' | 'bfs' - 遍历策略，默认为 'dfs'（深度优先）
-    - `order`: 'pre' | 'post' - 仅在深度优先遍历时有效，默认为 'pre'（前序遍历）
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `callback`: (node: TreeNode, context: Context) => void - Function to execute for each node
+- `options`: Options - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+    - `strategy`: 'dfs' | 'bfs' - Traversal strategy, default is 'dfs' (depth-first)
+    - `order`: 'pre' | 'post' - Only valid for depth-first traversal, default is 'pre' (pre-order traversal)
 
-**示例**：
+**Example**:
 
 ```js
 import { forEach } from '@suzilong/tree'
@@ -130,15 +132,15 @@ const tree = {
     ],
 }
 
-// 前序遍历（默认）
+// Pre-order traversal (default)
 forEach(tree, (node, context) => {
-    console.log(`节点: ${node.id}, 深度: ${context.depth}`)
-    // 输出: 节点: 1, 深度: 0
-    // 输出: 节点: 1-1, 深度: 1
-    // 输出: 节点: 1-1-1, 深度: 2
+    console.log(`Node: ${node.id}, Depth: ${context.depth}`)
+    // Output: Node: 1, Depth: 0
+    // Output: Node: 1-1, Depth: 1
+    // Output: Node: 1-1-1, Depth: 2
 })
 
-// 广度优先遍历
+// Breadth-first traversal
 forEach(
     tree,
     (node) => {
@@ -146,22 +148,22 @@ forEach(
     },
     { strategy: 'bfs' }
 )
-// 输出: 1, 1-1, 1-1-1
+// Output: 1, 1-1, 1-1-1
 ```
 
 #### depthFirst
 
-**功能**：深度优先遍历树结构
+**Function**: Depth-first traversal of the tree structure
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `callback`: (node: TreeNode, context: Context) => boolean | void - 对每个节点执行的函数，返回 false 可中断遍历
-- `options`: DepthFirstOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
-    - `order`: 'pre' | 'post' - 遍历顺序，默认为 'pre'（前序遍历）
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `callback`: (node: TreeNode, context: Context) => boolean | void - Function to execute for each node, return false to interrupt traversal
+- `options`: DepthFirstOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+    - `order`: 'pre' | 'post' - Traversal order, default is 'pre' (pre-order traversal)
 
-**示例**：
+**Example**:
 
 ```js
 import { depthFirst } from '@suzilong/tree'
@@ -176,15 +178,15 @@ const tree = {
     ],
 }
 
-// 前序遍历
-console.log('前序遍历:')
+// Pre-order traversal
+console.log('Pre-order traversal:')
 depthFirst(tree, (node) => {
     console.log(node.id)
 })
-// 输出: 1, 1-1, 1-1-1
+// Output: 1, 1-1, 1-1-1
 
-// 后序遍历
-console.log('后序遍历:')
+// Post-order traversal
+console.log('Post-order traversal:')
 depthFirst(
     tree,
     (node) => {
@@ -192,21 +194,21 @@ depthFirst(
     },
     { order: 'post' }
 )
-// 输出: 1-1-1, 1-1, 1
+// Output: 1-1-1, 1-1, 1
 ```
 
 #### breadthFirst
 
-**功能**：广度优先遍历树结构
+**Function**: Breadth-first traversal of the tree structure
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `callback`: (node: TreeNode, context: Context) => boolean | void - 对每个节点执行的函数，返回 false 可中断遍历
-- `options`: BaseOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `callback`: (node: TreeNode, context: Context) => boolean | void - Function to execute for each node, return false to interrupt traversal
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
 
-**示例**：
+**Example**:
 
 ```js
 import { breadthFirst } from '@suzilong/tree'
@@ -227,27 +229,27 @@ const tree = {
 breadthFirst(tree, (node) => {
     console.log(node.id)
 })
-// 输出: 1, 1-1, 1-2, 1-1-1
+// Output: 1, 1-1, 1-2, 1-1-1
 ```
 
-### 2. 查找 (find)
+### 2. Search (find)
 
 #### find
 
-**功能**：在树结构中查找满足条件的节点
+**Function**: Finds a node in the tree structure that meets the condition
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `callback`: (node: TreeNode) => boolean - 条件函数，返回 true 表示找到目标节点
-- `options`: FindOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
-    - `strategy`: 'dfs' | 'bfs' - 遍历策略，默认为 'dfs'
-    - `order`: 'pre' | 'post' - 仅在深度优先遍历时有效，默认为 'pre'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `callback`: (node: TreeNode) => boolean - Condition function, returns true to indicate the target node is found
+- `options`: FindOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+    - `strategy`: 'dfs' | 'bfs' - Traversal strategy, default is 'dfs'
+    - `order`: 'pre' | 'post' - Only valid for depth-first traversal, default is 'pre'
 
-**返回值**：TreeNode | null - 满足条件的节点，如果未找到则返回 null
+**Return Value**: TreeNode | null - The node that meets the condition, returns null if not found
 
-**示例**：
+**Example**:
 
 ```js
 import { find } from '@suzilong/tree'
@@ -266,28 +268,28 @@ const tree = {
 }
 
 const foundNode = find(tree, (node) => node.id === '1-2')
-console.log(foundNode) // 输出: { id: '1-2' }
+console.log(foundNode) // Output: { id: '1-2' }
 
 const notFoundNode = find(tree, (node) => node.id === '999')
-console.log(notFoundNode) // 输出: null
+console.log(notFoundNode) // Output: null
 ```
 
 #### findAll
 
-**功能**：在树结构中查找所有满足条件的节点
+**Function**: Finds all nodes in the tree structure that meet the condition
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `callback`: (node: TreeNode) => boolean - 条件函数，返回 true 表示找到目标节点
-- `options`: FindOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
-    - `strategy`: 'dfs' | 'bfs' - 遍历策略，默认为 'dfs'
-    - `order`: 'pre' | 'post' - 仅在深度优先遍历时有效，默认为 'pre'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `callback`: (node: TreeNode) => boolean - Condition function, returns true to indicate the target node is found
+- `options`: FindOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+    - `strategy`: 'dfs' | 'bfs' - Traversal strategy, default is 'dfs'
+    - `order`: 'pre' | 'post' - Only valid for depth-first traversal, default is 'pre'
 
-**返回值**：TreeNode[] - 满足条件的节点数组，如果未找到则返回空数组
+**Return Value**: TreeNode[] - Array of nodes that meet the condition, returns empty array if none found
 
-**示例**：
+**Example**:
 
 ```js
 import { findAll } from '@suzilong/tree'
@@ -309,26 +311,26 @@ const tree = {
 }
 
 const childNodes = findAll(tree, (node) => node.type === 'child')
-console.log(childNodes.length) // 输出: 3
-console.log(childNodes.map((node) => node.id)) // 输出: ['1-1', '1-1-1', '1-2']
+console.log(childNodes.length) // Output: 3
+console.log(childNodes.map((node) => node.id)) // Output: ['1-1', '1-1-1', '1-2']
 ```
 
 #### findPath
 
-**功能**：在树结构中查找满足条件的节点，并返回从根节点到该节点的路径
+**Function**: Finds a node in the tree structure that meets the condition and returns the path from the root node to that node
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `callback`: (node: TreeNode) => boolean - 条件函数，返回 true 表示找到目标节点
-- `options`: FindOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
-    - `strategy`: 'dfs' | 'bfs' - 遍历策略，默认为 'dfs'
-    - `order`: 'pre' | 'post' - 仅在深度优先遍历时有效，默认为 'pre'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `callback`: (node: TreeNode) => boolean - Condition function, returns true to indicate the target node is found
+- `options`: FindOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+    - `strategy`: 'dfs' | 'bfs' - Traversal strategy, default is 'dfs'
+    - `order`: 'pre' | 'post' - Only valid for depth-first traversal, default is 'pre'
 
-**返回值**：TreeNode[] - 根节点到该节点的路径，如果未找到则返回空数组
+**Return Value**: TreeNode[] - Path from root to the node, returns empty array if not found
 
-**示例**：
+**Example**:
 
 ```js
 import { findPath } from '@suzilong/tree'
@@ -344,29 +346,29 @@ const tree = {
 }
 
 const path = findPath(tree, (node) => node.id === '1-1-1')
-console.log(path.map((node) => node.id)) // 输出: ['1', '1-1', '1-1-1']
+console.log(path.map((node) => node.id)) // Output: ['1', '1-1', '1-1-1']
 
 const emptyPath = findPath(tree, (node) => node.id === '999')
-console.log(emptyPath) // 输出: []
+console.log(emptyPath) // Output: []
 ```
 
-### 3. 修改 (modify)
+### 3. Modification (modify)
 
 #### appendChild
 
-**功能**：向指定父节点追加一个子节点（作为最后一个子节点），只操作第一个匹配的父节点
+**Function**: Appends a child node to the specified parent node (as the last child), only operates on the first matching parent node
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 原树或森林
-- `predicate`: (node: TreeNode) => boolean - 断言函数，用于定位父节点（只使用第一个匹配的节点）
-- `newNode`: TreeNode - 要追加的新节点
-- `options`: BaseOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+- `tree`: TreeNode | TreeNode[] - Original tree or forest
+- `predicate`: (node: TreeNode) => boolean - Predicate function to locate the parent node (only uses the first matching node)
+- `newNode`: TreeNode - New node to append
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
 
-**返回值**：TreeNode | TreeNode[] - 新树（如果未找到父节点，则返回原树）
+**Return Value**: TreeNode | TreeNode[] - New tree (returns original tree if parent node not found)
 
-**示例**：
+**Example**:
 
 ```js
 import { appendChild } from '@suzilong/tree'
@@ -377,24 +379,24 @@ const tree = {
 }
 
 const newTree = appendChild(tree, (node) => node.id === '1', { id: '1-2' })
-console.log(newTree.children.map((node) => node.id)) // 输出: ['1-1', '1-2']
+console.log(newTree.children.map((node) => node.id)) // Output: ['1-1', '1-2']
 ```
 
 #### prependChild
 
-**功能**：向指定父节点 prepend 一个子节点（作为第一个子节点），只操作第一个匹配的父节点
+**Function**: Prepends a child node to the specified parent node (as the first child), only operates on the first matching parent node
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 原树或森林
-- `predicate`: (node: TreeNode) => boolean - 断言函数，用于定位父节点（只使用第一个匹配的节点）
-- `newNode`: TreeNode - 要 prepend 的新节点
-- `options`: BaseOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+- `tree`: TreeNode | TreeNode[] - Original tree or forest
+- `predicate`: (node: TreeNode) => boolean - Predicate function to locate the parent node (only uses the first matching node)
+- `newNode`: TreeNode - New node to prepend
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
 
-**返回值**：TreeNode | TreeNode[] - 新树（如果未找到父节点，则返回原树）
+**Return Value**: TreeNode | TreeNode[] - New tree (returns original tree if parent node not found)
 
-**示例**：
+**Example**:
 
 ```js
 import { prependChild } from '@suzilong/tree'
@@ -405,24 +407,24 @@ const tree = {
 }
 
 const newTree = prependChild(tree, (node) => node.id === '1', { id: '1-0' })
-console.log(newTree.children.map((node) => node.id)) // 输出: ['1-0', '1-1']
+console.log(newTree.children.map((node) => node.id)) // Output: ['1-0', '1-1']
 ```
 
 #### insertBefore
 
-**功能**：在指定节点前插入一个新节点，只操作第一个匹配的目标节点
+**Function**: Inserts a new node before the specified node, only operates on the first matching target node
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 原树或森林
-- `predicate`: (node: TreeNode) => boolean - 断言函数，用于定位目标节点（只使用第一个匹配的节点）
-- `newNode`: TreeNode - 要插入的新节点
-- `options`: BaseOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+- `tree`: TreeNode | TreeNode[] - Original tree or forest
+- `predicate`: (node: TreeNode) => boolean - Predicate function to locate the target node (only uses the first matching node)
+- `newNode`: TreeNode - New node to insert
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
 
-**返回值**：TreeNode | TreeNode[] - 新树（如果未找到目标节点，则返回原树）
+**Return Value**: TreeNode | TreeNode[] - New tree (returns original tree if target node not found)
 
-**示例**：
+**Example**:
 
 ```js
 import { insertBefore } from '@suzilong/tree'
@@ -433,24 +435,24 @@ const tree = {
 }
 
 const newTree = insertBefore(tree, (node) => node.id === '1-2', { id: '1-1.5' })
-console.log(newTree.children.map((node) => node.id)) // 输出: ['1-1', '1-1.5', '1-2']
+console.log(newTree.children.map((node) => node.id)) // Output: ['1-1', '1-1.5', '1-2']
 ```
 
 #### insertAfter
 
-**功能**：在指定节点后插入一个新节点，只操作第一个匹配的目标节点
+**Function**: Inserts a new node after the specified node, only operates on the first matching target node
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 原树或森林
-- `predicate`: (node: TreeNode) => boolean - 断言函数，用于定位目标节点（只使用第一个匹配的节点）
-- `newNode`: TreeNode - 要插入的新节点
-- `options`: BaseOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+- `tree`: TreeNode | TreeNode[] - Original tree or forest
+- `predicate`: (node: TreeNode) => boolean - Predicate function to locate the target node (only uses the first matching node)
+- `newNode`: TreeNode - New node to insert
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
 
-**返回值**：TreeNode | TreeNode[] - 新树（如果未找到目标节点，则返回原树）
+**Return Value**: TreeNode | TreeNode[] - New tree (returns original tree if target node not found)
 
-**示例**：
+**Example**:
 
 ```js
 import { insertAfter } from '@suzilong/tree'
@@ -461,23 +463,23 @@ const tree = {
 }
 
 const newTree = insertAfter(tree, (node) => node.id === '1-1', { id: '1-1.5' })
-console.log(newTree.children.map((node) => node.id)) // 输出: ['1-1', '1-1.5', '1-2']
+console.log(newTree.children.map((node) => node.id)) // Output: ['1-1', '1-1.5', '1-2']
 ```
 
 #### remove
 
-**功能**：移除树中所有满足条件的节点
+**Function**: Removes all nodes in the tree that meet the condition
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 原树或森林
-- `predicate`: (node: TreeNode) => boolean - 断言函数，用于定位要移除的节点
-- `options`: BaseOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+- `tree`: TreeNode | TreeNode[] - Original tree or forest
+- `predicate`: (node: TreeNode) => boolean - Predicate function to locate nodes to remove
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
 
-**返回值**：TreeNode | TreeNode[] - 新树（如果未找到要移除的节点，则返回原树）
+**Return Value**: TreeNode | TreeNode[] - New tree (returns original tree if no nodes to remove)
 
-**示例**：
+**Example**:
 
 ```js
 import { remove } from '@suzilong/tree'
@@ -488,24 +490,24 @@ const tree = {
 }
 
 const newTree = remove(tree, (node) => node.id === '1-1')
-console.log(newTree.children.map((node) => node.id)) // 输出: ['1-2']
+console.log(newTree.children.map((node) => node.id)) // Output: ['1-2']
 ```
 
 #### replace
 
-**功能**：替换树中所有满足条件的节点
+**Function**: Replaces all nodes in the tree that meet the condition
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 原树或森林
-- `predicate`: (node: TreeNode) => boolean - 断言函数，用于定位要替换的节点
-- `newNode`: TreeNode - 新节点
-- `options`: BaseOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+- `tree`: TreeNode | TreeNode[] - Original tree or forest
+- `predicate`: (node: TreeNode) => boolean - Predicate function to locate nodes to replace
+- `newNode`: TreeNode - New node
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
 
-**返回值**：TreeNode | TreeNode[] - 新树（如果未找到要替换的节点，则返回原树）
+**Return Value**: TreeNode | TreeNode[] - New tree (returns original tree if no nodes to replace)
 
-**示例**：
+**Example**:
 
 ```js
 import { replace } from '@suzilong/tree'
@@ -516,24 +518,24 @@ const tree = {
 }
 
 const newTree = replace(tree, (node) => node.id === '1-1', { id: '1-1-new' })
-console.log(newTree.children.map((node) => node.id)) // 输出: ['1-1-new', '1-2']
+console.log(newTree.children.map((node) => node.id)) // Output: ['1-1-new', '1-2']
 ```
 
 #### move
 
-**功能**：将一个节点移动到另一个节点的子节点列表中（作为最后一个子节点），只操作第一个匹配的源节点和目标节点
+**Function**: Moves a node to the child node list of another node (as the last child), only operates on the first matching source node and target node
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 原树或森林
-- `sourcePredicate`: (node: TreeNode) => boolean - 断言函数，用于定位要移动的节点（只使用第一个匹配的节点）
-- `targetPredicate`: (node: TreeNode) => boolean - 断言函数，用于定位目标父节点（只使用第一个匹配的节点）
-- `options`: BaseOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+- `tree`: TreeNode | TreeNode[] - Original tree or forest
+- `sourcePredicate`: (node: TreeNode) => boolean - Predicate function to locate the node to move (only uses the first matching node)
+- `targetPredicate`: (node: TreeNode) => boolean - Predicate function to locate the target parent node (only uses the first matching node)
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
 
-**返回值**：TreeNode | TreeNode[] - 新树（如果未找到源节点或目标节点，则返回原树）
+**Return Value**: TreeNode | TreeNode[] - New tree (returns original tree if source node or target node not found)
 
-**示例**：
+**Example**:
 
 ```js
 import { move } from '@suzilong/tree'
@@ -554,64 +556,64 @@ const newTree = move(
     (node) => node.id === '1-1',
     (node) => node.id === '1-2'
 )
-console.log(newTree.children.map((node) => node.id)) // 输出: ['1-2']
-console.log(newTree.children[0].children.map((node) => node.id)) // 输出: ['1-1']
+console.log(newTree.children.map((node) => node.id)) // Output: ['1-2']
+console.log(newTree.children[0].children.map((node) => node.id)) // Output: ['1-1']
 ```
 
-### 4. 转换 (transform)
+### 4. Transformation (transform)
 
 #### arrayToTree
 
-**功能**：将扁平数组转换为树结构
+**Function**: Converts a flat array to a tree structure
 
-**参数**：
+**Parameters**:
 
-- `array`: any[] - 扁平数组
-- `options`: ArrayToTreeOptions - 配置选项
-    - `idKey`: string - 节点唯一标识字段名，默认为 'id'
-    - `parentIdKey`: string - 父节点标识字段名，默认为 'parentId'
-    - `childrenKey`: string - 子节点数组字段名，默认为 'children'
-    - `rootParentValue`: null | undefined | string | number - 根节点的父标识值，默认为 null 或 undefined
+- `array`: any[] - Flat array
+- `options`: ArrayToTreeOptions - Configuration options
+    - `idKey`: string - Node unique identifier field name, default is 'id'
+    - `parentIdKey`: string - Parent node identifier field name, default is 'parentId'
+    - `childrenKey`: string - Child node array field name, default is 'children'
+    - `rootParentValue`: null | undefined | string | number - Root node parent identifier value, default is null or undefined
 
-**返回值**：TreeNode[] - 转换后的树结构（森林）
+**Return Value**: TreeNode[] - Converted tree structure (forest)
 
-**示例**：
+**Example**:
 
 ```js
 import { arrayToTree } from '@suzilong/tree'
 
 const array = [
-    { id: '1', name: '节点1', parentId: null },
-    { id: '2', name: '节点2', parentId: '1' },
-    { id: '3', name: '节点3', parentId: '1' },
-    { id: '4', name: '节点4', parentId: '2' },
+    { id: '1', name: 'Node 1', parentId: null },
+    { id: '2', name: 'Node 2', parentId: '1' },
+    { id: '3', name: 'Node 3', parentId: '1' },
+    { id: '4', name: 'Node 4', parentId: '2' },
 ]
 
 const tree = arrayToTree(array)
-console.log(tree[0].id) // 输出: '1'
-console.log(tree[0].children.length) // 输出: 2
-console.log(tree[0].children[0].children[0].id) // 输出: '4'
+console.log(tree[0].id) // Output: '1'
+console.log(tree[0].children.length) // Output: 2
+console.log(tree[0].children[0].children[0].id) // Output: '4'
 ```
 
 #### treeToArray
 
-**功能**：将树结构转换为扁平数组
+**Function**: Converts a tree structure to a flat array
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `options`: TreeToArrayOptions - 配置选项
-    - `idKey`: string - 节点唯一标识字段名，默认为 'id'
-    - `parentIdKey`: string - 输出中父节点标识字段名，默认为 'parentId'
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
-    - `rootParentValue`: null | undefined | string | number - 根节点的父标识值，默认为 null
-    - `keepChildren`: boolean - 是否在输出中保留子节点数组，默认为 false（移除 children）
-    - `strategy`: 'dfs' | 'bfs' - 遍历策略，默认为 'dfs'
-    - `order`: 'pre' | 'post' - 遍历顺序，仅对 dfs 有效，默认为 'pre'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `options`: TreeToArrayOptions - Configuration options
+    - `idKey`: string - Node unique identifier field name, default is 'id'
+    - `parentIdKey`: string - Parent node identifier field name in output, default is 'parentId'
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+    - `rootParentValue`: null | undefined | string | number - Root node parent identifier value, default is null
+    - `keepChildren`: boolean - Whether to keep child node array in output, default is false (remove children)
+    - `strategy`: 'dfs' | 'bfs' - Traversal strategy, default is 'dfs'
+    - `order`: 'pre' | 'post' - Traversal order, only valid for dfs, default is 'pre'
 
-**返回值**：any[] - 转换后的扁平数组
+**Return Value**: any[] - Converted flat array
 
-**示例**：
+**Example**:
 
 ```js
 import { treeToArray } from '@suzilong/tree'
@@ -629,27 +631,27 @@ const tree = [
 ]
 
 const array = treeToArray(tree)
-console.log(array.length) // 输出: 3
-console.log(array.map((item) => item.id)) // 输出: ['1', '1-1', '1-1-1']
-console.log(array.map((item) => item.parentId)) // 输出: [null, '1', '1-1']
+console.log(array.length) // Output: 3
+console.log(array.map((item) => item.id)) // Output: ['1', '1-1', '1-1-1']
+console.log(array.map((item) => item.parentId)) // Output: [null, '1', '1-1']
 ```
 
 #### map
 
-**功能**：对树中的每个节点执行映射函数，返回新树
+**Function**: Executes a mapping function on each node in the tree, returns a new tree
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `callback`: (node: TreeNode, context: Context) => TreeNode - 映射函数，返回新节点
-- `options`: Options - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
-    - `strategy`: 'dfs' | 'bfs' - 遍历策略，默认为 'dfs'
-    - `order`: 'pre' | 'post' - 仅在深度优先遍历时有效，默认为 'pre'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `callback`: (node: TreeNode, context: Context) => TreeNode - Mapping function, returns new node
+- `options`: Options - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+    - `strategy`: 'dfs' | 'bfs' - Traversal strategy, default is 'dfs'
+    - `order`: 'pre' | 'post' - Only valid for depth-first traversal, default is 'pre'
 
-**返回值**：TreeNode | TreeNode[] - 映射后的新树
+**Return Value**: TreeNode | TreeNode[] - New mapped tree
 
-**示例**：
+**Example**:
 
 ```js
 import { map } from '@suzilong/tree'
@@ -670,26 +672,26 @@ const newTree = map(tree, (node) => ({
     value: node.value * 2,
 }))
 
-console.log(newTree.value) // 输出: 20
-console.log(newTree.children[0].value) // 输出: 40
+console.log(newTree.value) // Output: 20
+console.log(newTree.children[0].value) // Output: 40
 ```
 
 #### filter
 
-**功能**：过滤树中的节点，返回新树
+**Function**: Filters nodes in the tree, returns a new tree
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `callback`: (node: TreeNode, context: Context) => boolean - 过滤函数，返回 true 表示保留节点
-- `options`: Options - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
-    - `strategy`: 'dfs' | 'bfs' - 遍历策略，默认为 'dfs'
-    - `order`: 'pre' | 'post' - 仅在深度优先遍历时有效，默认为 'pre'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `callback`: (node: TreeNode, context: Context) => boolean - Filter function, returns true to keep node
+- `options`: Options - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+    - `strategy`: 'dfs' | 'bfs' - Traversal strategy, default is 'dfs'
+    - `order`: 'pre' | 'post' - Only valid for depth-first traversal, default is 'pre'
 
-**返回值**：TreeNode | TreeNode[] - 过滤后的新树
+**Return Value**: TreeNode | TreeNode[] - New filtered tree
 
-**示例**：
+**Example**:
 
 ```js
 import { filter } from '@suzilong/tree'
@@ -711,28 +713,28 @@ const tree = {
 }
 
 const filteredTree = filter(tree, (node) => node.type === 'parent')
-console.log(filteredTree.id) // 输出: '1'
-console.log(filteredTree.children.length) // 输出: 1
-console.log(filteredTree.children[0].id) // 输出: '1-2'
+console.log(filteredTree.id) // Output: '1'
+console.log(filteredTree.children.length) // Output: 1
+console.log(filteredTree.children[0].id) // Output: '1-2'
 ```
 
 #### reduce
 
-**功能**：对树中的节点执行归约函数，返回累加结果
+**Function**: Executes a reduce function on nodes in the tree, returns the accumulated result
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `callback`: (accumulator: any, node: TreeNode, context: Context) => any - 归约函数
-- `initialValue`: any - 初始累加值
-- `options`: Options - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
-    - `strategy`: 'dfs' | 'bfs' - 遍历策略，默认为 'dfs'
-    - `order`: 'pre' | 'post' - 仅在深度优先遍历时有效，默认为 'pre'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `callback`: (accumulator: any, node: TreeNode, context: Context) => any - Reduce function
+- `initialValue`: any - Initial accumulated value
+- `options`: Options - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+    - `strategy`: 'dfs' | 'bfs' - Traversal strategy, default is 'dfs'
+    - `order`: 'pre' | 'post' - Only valid for depth-first traversal, default is 'pre'
 
-**返回值**：any - 归约结果
+**Return Value**: any - Reduced result
 
-**示例**：
+**Example**:
 
 ```js
 import { reduce } from '@suzilong/tree'
@@ -753,24 +755,24 @@ const tree = {
 }
 
 const sum = reduce(tree, (acc, node) => acc + node.value, 0)
-console.log(sum) // 输出: 60
+console.log(sum) // Output: 60
 ```
 
 #### flat
 
-**功能**：将树结构扁平化为节点数组
+**Function**: Flattens a tree structure into an array of nodes
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `options`: Options - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
-    - `strategy`: 'dfs' | 'bfs' - 遍历策略，默认为 'dfs'
-    - `order`: 'pre' | 'post' - 仅在深度优先遍历时有效，默认为 'pre'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `options`: Options - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+    - `strategy`: 'dfs' | 'bfs' - Traversal strategy, default is 'dfs'
+    - `order`: 'pre' | 'post' - Only valid for depth-first traversal, default is 'pre'
 
-**返回值**：TreeNode[] - 扁平后的节点数组
+**Return Value**: TreeNode[] - Flattened node array
 
-**示例**：
+**Example**:
 
 ```js
 import { flat } from '@suzilong/tree'
@@ -786,25 +788,25 @@ const tree = {
 }
 
 const nodes = flat(tree)
-console.log(nodes.length) // 输出: 3
-console.log(nodes.map((node) => node.id)) // 输出: ['1', '1-1', '1-1-1']
+console.log(nodes.length) // Output: 3
+console.log(nodes.map((node) => node.id)) // Output: ['1', '1-1', '1-1-1']
 ```
 
-### 5. 查询 (query)
+### 5. Query (query)
 
 #### getCount
 
-**功能**：获取树中节点的数量
+**Function**: Gets the number of nodes in the tree
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `options`: BaseOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
 
-**返回值**：number - 节点数量
+**Return Value**: number - Number of nodes
 
-**示例**：
+**Example**:
 
 ```js
 import { getCount } from '@suzilong/tree'
@@ -820,22 +822,22 @@ const tree = {
 }
 
 const count = getCount(tree)
-console.log(count) // 输出: 3
+console.log(count) // Output: 3
 ```
 
 #### getLeafCount
 
-**功能**：获取树中叶子节点的数量
+**Function**: Gets the number of leaf nodes in the tree
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `options`: BaseOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
 
-**返回值**：number - 叶子节点数量
+**Return Value**: number - Number of leaf nodes
 
-**示例**：
+**Example**:
 
 ```js
 import { getLeafCount } from '@suzilong/tree'
@@ -854,22 +856,22 @@ const tree = {
 }
 
 const leafCount = getLeafCount(tree)
-console.log(leafCount) // 输出: 2
+console.log(leafCount) // Output: 2
 ```
 
 #### getDepth
 
-**功能**：获取树的深度
+**Function**: Gets the depth of the tree
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `options`: BaseOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
 
-**返回值**：number - 树的深度
+**Return Value**: number - Tree depth
 
-**示例**：
+**Example**:
 
 ```js
 import { getDepth } from '@suzilong/tree'
@@ -885,23 +887,23 @@ const tree = {
 }
 
 const depth = getDepth(tree)
-console.log(depth) // 输出: 3
+console.log(depth) // Output: 3
 ```
 
 #### getAncestors
 
-**功能**：获取指定节点的所有祖先节点
+**Function**: Gets all ancestor nodes of the specified node
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `predicate`: (node: TreeNode) => boolean - 断言函数，用于定位目标节点
-- `options`: BaseOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `predicate`: (node: TreeNode) => boolean - Predicate function to locate the target node
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
 
-**返回值**：TreeNode[] - 祖先节点数组（从根节点到父节点）
+**Return Value**: TreeNode[] - Ancestor node array (from root to parent node)
 
-**示例**：
+**Example**:
 
 ```js
 import { getAncestors } from '@suzilong/tree'
@@ -917,25 +919,25 @@ const tree = {
 }
 
 const ancestors = getAncestors(tree, (node) => node.id === '1-1-1')
-console.log(ancestors.map((node) => node.id)) // 输出: ['1', '1-1']
+console.log(ancestors.map((node) => node.id)) // Output: ['1', '1-1']
 ```
 
 #### getDescendants
 
-**功能**：获取指定节点的所有后代节点
+**Function**: Gets all descendant nodes of the specified node
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `predicate`: (node: TreeNode) => boolean - 断言函数，用于定位目标节点
-- `options`: Options - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
-    - `strategy`: 'dfs' | 'bfs' - 遍历策略，默认为 'dfs'
-    - `order`: 'pre' | 'post' - 仅在深度优先遍历时有效，默认为 'pre'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `predicate`: (node: TreeNode) => boolean - Predicate function to locate the target node
+- `options`: Options - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+    - `strategy`: 'dfs' | 'bfs' - Traversal strategy, default is 'dfs'
+    - `order`: 'pre' | 'post' - Only valid for depth-first traversal, default is 'pre'
 
-**返回值**：TreeNode[] - 后代节点数组
+**Return Value**: TreeNode[] - Descendant node array
 
-**示例**：
+**Example**:
 
 ```js
 import { getDescendants } from '@suzilong/tree'
@@ -954,24 +956,24 @@ const tree = {
 }
 
 const descendants = getDescendants(tree, (node) => node.id === '1')
-console.log(descendants.length) // 输出: 3
-console.log(descendants.map((node) => node.id)) // 输出: ['1-1', '1-1-1', '1-2']
+console.log(descendants.length) // Output: 3
+console.log(descendants.map((node) => node.id)) // Output: ['1-1', '1-1-1', '1-2']
 ```
 
 #### getSiblings
 
-**功能**：获取指定节点的所有兄弟节点（不包括自身）
+**Function**: Gets all sibling nodes of the specified node (excluding itself)
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `predicate`: (node: TreeNode) => boolean - 断言函数，用于定位目标节点
-- `options`: BaseOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `predicate`: (node: TreeNode) => boolean - Predicate function to locate the target node
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
 
-**返回值**：TreeNode[] - 兄弟节点数组
+**Return Value**: TreeNode[] - Sibling node array
 
-**示例**：
+**Example**:
 
 ```js
 import { getSiblings } from '@suzilong/tree'
@@ -982,25 +984,25 @@ const tree = {
 }
 
 const siblings = getSiblings(tree, (node) => node.id === '1-2')
-console.log(siblings.length) // 输出: 2
-console.log(siblings.map((node) => node.id)) // 输出: ['1-1', '1-3']
+console.log(siblings.length) // Output: 2
+console.log(siblings.map((node) => node.id)) // Output: ['1-1', '1-3']
 ```
 
-### 6. 其他 (orther)
+### 6. Other (other)
 
 #### clone
 
-**功能**：深拷贝树结构
+**Function**: Deep copies the tree structure
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `options`: BaseOptions - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
 
-**返回值**：TreeNode | TreeNode[] - 拷贝后的新树
+**Return Value**: TreeNode | TreeNode[] - New copied tree
 
-**示例**：
+**Example**:
 
 ```js
 import { clone } from '@suzilong/tree'
@@ -1011,27 +1013,27 @@ const tree = {
 }
 
 const clonedTree = clone(tree)
-console.log(clonedTree === tree) // 输出: false
-console.log(clonedTree.children === tree.children) // 输出: false
-console.log(clonedTree.children[0].id === tree.children[0].id) // 输出: true
+console.log(clonedTree === tree) // Output: false
+console.log(clonedTree.children === tree.children) // Output: false
+console.log(clonedTree.children[0].id === tree.children[0].id) // Output: true
 ```
 
 #### every
 
-**功能**：检查树中的所有节点是否都满足条件
+**Function**: Checks if all nodes in the tree meet the condition
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `callback`: (node: TreeNode, context: Context) => boolean - 条件函数
-- `options`: Options - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
-    - `strategy`: 'dfs' | 'bfs' - 遍历策略，默认为 'dfs'
-    - `order`: 'pre' | 'post' - 仅在深度优先遍历时有效，默认为 'pre'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `callback`: (node: TreeNode, context: Context) => boolean - Condition function
+- `options`: Options - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+    - `strategy`: 'dfs' | 'bfs' - Traversal strategy, default is 'dfs'
+    - `order`: 'pre' | 'post' - Only valid for depth-first traversal, default is 'pre'
 
-**返回值**：boolean - 所有节点都满足条件返回 true，否则返回 false
+**Return Value**: boolean - Returns true if all nodes meet the condition, otherwise false
 
-**示例**：
+**Example**:
 
 ```js
 import { every } from '@suzilong/tree'
@@ -1048,28 +1050,28 @@ const tree = {
 }
 
 const allNodes = every(tree, (node) => node.type === 'node')
-console.log(allNodes) // 输出: true
+console.log(allNodes) // Output: true
 
 const hasLeaf = every(tree, (node) => node.children)
-console.log(hasLeaf) // 输出: false
+console.log(hasLeaf) // Output: false
 ```
 
 #### some
 
-**功能**：检查树中是否至少有一个节点满足条件
+**Function**: Checks if at least one node in the tree meets the condition
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `callback`: (node: TreeNode, context: Context) => boolean - 条件函数
-- `options`: Options - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
-    - `strategy`: 'dfs' | 'bfs' - 遍历策略，默认为 'dfs'
-    - `order`: 'pre' | 'post' - 仅在深度优先遍历时有效，默认为 'pre'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `callback`: (node: TreeNode, context: Context) => boolean - Condition function
+- `options`: Options - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+    - `strategy`: 'dfs' | 'bfs' - Traversal strategy, default is 'dfs'
+    - `order`: 'pre' | 'post' - Only valid for depth-first traversal, default is 'pre'
 
-**返回值**：boolean - 至少有一个节点满足条件返回 true，否则返回 false
+**Return Value**: boolean - Returns true if at least one node meets the condition, otherwise false
 
-**示例**：
+**Example**:
 
 ```js
 import { some } from '@suzilong/tree'
@@ -1086,25 +1088,25 @@ const tree = {
 }
 
 const hasChild = some(tree, (node) => node.type === 'child')
-console.log(hasChild) // 输出: true
+console.log(hasChild) // Output: true
 
 const hasLeaf = some(tree, (node) => node.id === '999')
-console.log(hasLeaf) // 输出: false
+console.log(hasLeaf) // Output: false
 ```
 
 #### print
 
-**功能**：在控制台打印tree，用于调试，打印结果类似Linux tree命令
+**Function**: Prints the tree in the console for debugging, similar to the Linux tree command
 
-**参数**：
+**Parameters**:
 
-- `tree`: TreeNode | TreeNode[] - 树或森林
-- `options`: Options - 配置选项
-    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `options`: Options - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
 
-**返回值**：无
+**Return Value**: None
 
-**示例**：
+**Example**:
 
 ```js
 import { print } from '@suzilong/tree'
@@ -1123,15 +1125,15 @@ const tree = {
 print(tree, { childrenKey: 'children' })
 ```
 
-## 类型定义
+## Type Definitions
 
 ### TreeNode
 
 ```typescript
 type TreeNode<T = unknown, ChildKey extends string = 'children'> = {
-    [key: string]: unknown // 允许任意其他属性
+    [key: string]: unknown // Allow any other properties
 } & {
-    [K in ChildKey]?: TreeNode<T, ChildKey>[] // 动态子节点字段
+    [K in ChildKey]?: TreeNode<T, ChildKey>[] // Dynamic child node field
 }
 ```
 
@@ -1139,10 +1141,10 @@ type TreeNode<T = unknown, ChildKey extends string = 'children'> = {
 
 ```typescript
 interface Context {
-    index: number // 当前节点在兄弟节点中的位置（从 0 开始）
-    depth: number // 当前节点深度（根节点为 0）
-    parent: TreeNode | null // 父节点，根节点为 null
-    path: TreeNode[] // 从根到当前节点的路径
+    index: number // Current node's position among siblings (starting from 0)
+    depth: number // Current node depth (root node is 0)
+    parent: TreeNode | null // Parent node, root node is null
+    path: TreeNode[] // Path from root to current node
 }
 ```
 
@@ -1150,8 +1152,8 @@ interface Context {
 
 ```typescript
 interface Options extends BaseOptions {
-    strategy?: 'dfs' | 'bfs' // 遍历策略，默认为 'dfs'（深度优先），可选 'bfs'（广度优先）
-    order?: 'pre' | 'post' // 仅在深度优先遍历时有效，默认为 'pre'（前序遍历），可选 'post'（后序遍历）
+    strategy?: 'dfs' | 'bfs' // Traversal strategy, default is 'dfs' (depth-first), optional 'bfs' (breadth-first)
+    order?: 'pre' | 'post' // Only valid for depth-first traversal, default is 'pre' (pre-order), optional 'post' (post-order)
 }
 ```
 
@@ -1159,7 +1161,7 @@ interface Options extends BaseOptions {
 
 ```typescript
 interface BaseOptions {
-    childrenKey?: string // 自定义子节点字段名，默认为 'children'
+    childrenKey?: string // Custom child node field name, default is 'children'
 }
 ```
 
@@ -1167,13 +1169,13 @@ interface BaseOptions {
 
 ```typescript
 interface ArrayToTreeOptions {
-    /** 节点唯一标识字段名，默认为 'id' */
+    /** Node unique identifier field name, default is 'id' */
     idKey?: string
-    /** 父节点标识字段名，默认为 'parentId' */
+    /** Parent node identifier field name, default is 'parentId' */
     parentIdKey?: string
-    /** 子节点数组字段名，默认为 'children' */
+    /** Child node array field name, default is 'children' */
     childrenKey?: string
-    /** 根节点的父标识值，默认为 null 或 undefined */
+    /** Root node parent identifier value, default is null or undefined */
     rootParentValue?: null | undefined | string | number
 }
 ```
@@ -1182,19 +1184,19 @@ interface ArrayToTreeOptions {
 
 ```typescript
 interface TreeToArrayOptions {
-    /** 节点唯一标识字段名，默认为 'id' */
+    /** Node unique identifier field name, default is 'id' */
     idKey?: string
-    /** 输出中父节点标识字段名，默认为 'parentId' */
+    /** Parent node identifier field name in output, default is 'parentId' */
     parentIdKey?: string
-    /** 自定义子节点字段名，默认为 'children' */
+    /** Custom child node field name, default is 'children' */
     childrenKey?: string
-    /** 根节点的父标识值，默认为 null */
+    /** Root node parent identifier value, default is null */
     rootParentValue?: null | undefined | string | number
-    /** 是否在输出中保留子节点数组，默认为 false（移除 children） */
+    /** Whether to keep child node array in output, default is false (remove children) */
     keepChildren?: boolean
-    /** 遍历策略，默认为 'dfs' */
+    /** Traversal strategy, default is 'dfs' */
     strategy?: 'dfs' | 'bfs'
-    /** 遍历顺序，仅对 dfs 有效，默认为 'pre' */
+    /** Traversal order, only valid for dfs, default is 'pre' */
     order?: 'pre' | 'post'
 }
 ```
