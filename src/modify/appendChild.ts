@@ -17,58 +17,45 @@ export function appendChild(
     options: BaseOptions = {}
 ): TreeNode | TreeNode[] {
     const { childrenKey = DEFAULT_CHILDREN_KEY } = options
-    let done = false // 标记是否已经处理过第一个匹配的节点
+    let isAppend = false // 标记是否已经处理过第一个匹配的节点
 
-    // 递归处理单个节点
-    const appendToNode = (node: TreeNode): TreeNode => {
-        // 如果已经处理过，直接返回原节点
-        if (done) return node
+    function recursion(node: TreeNode): TreeNode {
+        if (isAppend) return node // 已经处理过第一个匹配的节点，后续不再修改
 
-        // 先判断当前节点是否为目标父节点
+        const children = Array.isArray(node[childrenKey])
+            ? node[childrenKey]
+            : []
+
         if (predicate(node)) {
-            done = true
-            // 创建新节点（浅拷贝原节点）
-            const newNodeCopy = { ...node }
-            // 获取现有子节点（确保是数组）
-            const existingChildren = newNodeCopy[childrenKey]
-            const childrenArray = Array.isArray(existingChildren)
-                ? existingChildren
-                : []
-            // 将新节点追加到末尾
-            newNodeCopy[childrenKey] = [...childrenArray, newNode]
-            return newNodeCopy
-        }
-
-        // 不是目标节点，递归处理子节点
-        const children = node[childrenKey]
-        if (Array.isArray(children)) {
-            let hasChanges = false
-            const newChildren = children.map((child) => {
-                const newChild = appendToNode(child)
-                if (newChild !== child) hasChanges = true
-                return newChild
-            })
-            if (hasChanges) {
-                // 子节点有变化，返回新节点
-                return { ...node, [childrenKey]: newChildren }
+            isAppend = true
+            return {
+                ...node,
+                [childrenKey]: [...children, newNode],
             }
         }
-        return node
+
+        if (children.length > 0) {
+            return {
+                ...node,
+                [childrenKey]: children.map(recursion),
+            }
+        }
+
+        return { ...node }
     }
 
-    // 处理森林
+    let result: TreeNode | TreeNode[]
+
     if (Array.isArray(tree)) {
-        const newForest: TreeNode[] = []
-        for (const root of tree) {
-            if (done) {
-                // 已处理过，后续根节点原样保留
-                newForest.push(root)
-            } else {
-                newForest.push(appendToNode(root))
-            }
-        }
-        return newForest
+        result = tree.map((root) => recursion(root))
     } else {
-        return appendToNode(tree)
+        result = recursion(tree)
     }
+
+    if (!isAppend) {
+        // 如果没有找到匹配的父节点，返回原树
+        return tree
+    }
+
+    return result
 }
