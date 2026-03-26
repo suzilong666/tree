@@ -142,4 +142,92 @@ describe('appendChild 追加子节点（只操作第一个匹配）', () => {
         appendChild(originalTree, (node) => node.id === 2, { id: 5 })
         expect(originalTree).toEqual(originalCopy)
     })
+
+    it('应在深层嵌套结构中正确追加子节点', () => {
+        const deepTree: TreeNode = {
+            id: 1,
+            children: [
+                {
+                    id: 2,
+                    children: [
+                        {
+                            id: 3,
+                            children: [{ id: 4 }],
+                        },
+                    ],
+                },
+            ],
+        }
+        const newNode = { id: 5, name: 'deep child' }
+        const newTree = appendChild(deepTree, (node) => node.id === 3, newNode)
+
+        expect(newTree).not.toBe(deepTree)
+        expect((newTree as any).children[0].children[0].children).toEqual([
+            { id: 4 },
+            { id: 5, name: 'deep child' },
+        ])
+    })
+
+    it('新节点本身带有 children 时应正确追加', () => {
+        const newNodeWithChildren = {
+            id: 5,
+            name: 'new parent',
+            children: [{ id: 6, name: 'grandchild' }],
+        }
+        const newTree = appendChild(
+            originalTree,
+            (node) => node.id === 2,
+            newNodeWithChildren
+        )
+
+        expect(newTree).not.toBe(originalTree)
+        expect((newTree as any).children[0].children).toEqual([
+            { id: 4, name: 'a1' },
+            newNodeWithChildren,
+        ])
+    })
+
+    it('父节点的 children 为空数组时应正确追加', () => {
+        const treeWithEmptyChildren: TreeNode = {
+            id: 1,
+            name: 'parent',
+            children: [],
+        }
+        const newNode = { id: 2, name: 'child' }
+        const newTree = appendChild(
+            treeWithEmptyChildren,
+            (node) => node.id === 1,
+            newNode
+        )
+
+        expect(newTree).toEqual({
+            id: 1,
+            name: 'parent',
+            children: [{ id: 2, name: 'child' }],
+        })
+    })
+
+    it('多个匹配节点时只修改第一个匹配的节点', () => {
+        const treeWithMultipleMatches: TreeNode = {
+            id: 1,
+            children: [
+                { id: 2, name: 'match' },
+                { id: 3, name: 'match' },
+                { id: 4, name: 'match' },
+            ],
+        }
+        const newNode = { id: 5, name: 'new' }
+        const newTree = appendChild(
+            treeWithMultipleMatches,
+            (node) => node.name === 'match',
+            newNode
+        )
+
+        expect(newTree).not.toBe(treeWithMultipleMatches)
+        expect((newTree as any).children[0].children).toEqual([
+            { id: 5, name: 'new' },
+        ])
+        expect((newTree as any).children[1].children).toBeUndefined()
+        expect((newTree as any).children[2].children).toBeUndefined()
+    })
 })
