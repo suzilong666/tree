@@ -106,4 +106,69 @@ describe('remove 删除节点', () => {
         remove(originalTree, (node) => node.id === 4)
         expect(originalTree).toEqual(originalCopy)
     })
+
+    it('应在深层嵌套结构中正确删除节点', () => {
+        const deepTree: TreeNode = {
+            id: 1,
+            children: [
+                {
+                    id: 2,
+                    children: [
+                        {
+                            id: 3,
+                            children: [{ id: 4 }, { id: 5 }, { id: 6 }],
+                        },
+                    ],
+                },
+            ],
+        }
+        const newTree = remove(deepTree, (node) => node.id === 5)
+
+        expect(newTree).not.toBe(deepTree)
+        expect((newTree as any).children[0].children[0].children).toEqual([
+            { id: 4 },
+            { id: 6 },
+        ])
+    })
+
+    it('多个匹配节点时只删除第一个匹配的节点', () => {
+        const treeWithMultipleMatches: TreeNode = {
+            id: 1,
+            children: [
+                { id: 2, name: 'match' },
+                { id: 3, name: 'match' },
+                { id: 4, name: 'match' },
+            ],
+        }
+        const newTree = remove(
+            treeWithMultipleMatches,
+            (node) => node.name === 'match'
+        )
+
+        expect(newTree).not.toBe(treeWithMultipleMatches)
+        expect((newTree as any).children.map((n: any) => n.id)).toEqual([3, 4])
+    })
+
+    it('父节点的 children 字段为非数组时应忽略', () => {
+        const weirdTree: any = {
+            id: 1,
+            children: 'not-array',
+            subs: [{ id: 2 }, { id: 3 }],
+        }
+        const newTree = remove(weirdTree, (node) => node.id === 2, {
+            childrenKey: 'subs',
+        })
+
+        expect(newTree).not.toBe(weirdTree)
+        expect((newTree as any).subs).toEqual([{ id: 3 }])
+    })
+
+    it('删除根节点后应返回 null', () => {
+        const singleTree: TreeNode = {
+            id: 1,
+            name: 'root',
+        }
+        const result = remove(singleTree, (node) => node.id === 1)
+        expect(result).toBeNull()
+    })
 })

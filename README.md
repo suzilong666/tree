@@ -477,7 +477,7 @@ console.log(newTree.children.map((node) => node.id)) // Output: ['1-1', '1-1.5',
 - `options`: BaseOptions - Configuration options
     - `childrenKey`: string - Custom child node field name, default is 'children'
 
-**Return Value**: TreeNode | TreeNode[] - New tree (returns original tree if no nodes to remove)
+**Return Value**: null | TreeNode | TreeNode[] - New tree (returns original tree if no nodes to remove)
 
 **Example**:
 
@@ -491,6 +491,9 @@ const tree = {
 
 const newTree = remove(tree, (node) => node.id === '1-1')
 console.log(newTree.children.map((node) => node.id)) // Output: ['1-2']
+
+const newTree2 = remove(tree, (node) => node.id === '1')
+console.log(newTree2) // Output: null
 ```
 
 #### replace

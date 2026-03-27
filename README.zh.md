@@ -477,7 +477,7 @@ console.log(newTree.children.map((node) => node.id)) // 输出: ['1-1', '1-1.5',
 - `options`: BaseOptions - 配置选项
     - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
 
-**返回值**：TreeNode | TreeNode[] - 新树（如果未找到要移除的节点，则返回原树）
+**返回值**：null | TreeNode | TreeNode[] - 新树（如果未找到要移除的节点，则返回原树）
 
 **示例**：
 
@@ -491,6 +491,9 @@ const tree = {
 
 const newTree = remove(tree, (node) => node.id === '1-1')
 console.log(newTree.children.map((node) => node.id)) // 输出: ['1-2']
+
+const newTree2 = remove(tree, (node) => node.id === '1')
+console.log(newTree2) // 输出: null
 ```
 
 #### replace
