@@ -98,6 +98,8 @@ forEach(tree, (node) => {
     - [every](#every)
     - [some](#some)
     - [print](#print)
+- [7. Relationship (is)](#7-relationship-is)
+    - [isBrother](#isbrother)
 - [Type Definitions](#type-definitions)
 
 ---
@@ -1126,6 +1128,61 @@ const tree = {
 }
 
 print(tree, { childrenKey: 'children' })
+```
+
+### 7. Relationship (is)
+
+#### isBrother
+
+**Function**: Determines if two nodes are brothers (i.e., have the same parent)
+
+**Parameters**:
+
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `predicateA`: (node: TreeNode) => boolean - Predicate function to locate the first node
+- `predicateB`: (node: TreeNode) => boolean - Predicate function to locate the second node
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+
+**Return Value**: boolean - Returns true if the nodes are brothers, otherwise false
+
+**Example**:
+
+```js
+import { isBrother } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        { id: '2', name: 'a' },
+        { id: '3', name: 'b' },
+        { id: '4', name: 'c' }
+    ]
+}
+
+// Check if nodes with id 2 and 3 are brothers
+const areBrothers = isBrother(
+    tree,
+    (node) => node.id === 2,
+    (node) => node.id === 3
+)
+console.log(areBrothers) // Output: true
+
+// Check if nodes with id 2 and 4 are brothers
+const areBrothers2 = isBrother(
+    tree,
+    (node) => node.id === 2,
+    (node) => node.id === 4
+)
+console.log(areBrothers2) // Output: true
+
+// Check if a node is a brother to itself
+const areBrothers3 = isBrother(
+    tree,
+    (node) => node.id === 2,
+    (node) => node.id === 2
+)
+console.log(areBrothers3) // Output: false
 ```
 
 ## Type Definitions

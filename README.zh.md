@@ -98,6 +98,8 @@ forEach(tree, (node) => {
     - [every](#every)
     - [some](#some)
     - [print](#print)
+- [7. 关系判断 (is)](#7-关系判断-is)
+    - [isBrother](#isbrother)
 - [类型定义](#类型定义)
 
 ---
@@ -1126,6 +1128,61 @@ const tree = {
 }
 
 print(tree, { childrenKey: 'children' })
+```
+
+### 7. 关系判断 (is)
+
+#### isBrother
+
+**功能**：判断两个节点是否为兄弟节点（即具有相同的父节点）
+
+**参数**：
+
+- `tree`: TreeNode | TreeNode[] - 树或森林
+- `predicateA`: (node: TreeNode) => boolean - 定位第一个节点的断言函数
+- `predicateB`: (node: TreeNode) => boolean - 定位第二个节点的断言函数
+- `options`: BaseOptions - 配置选项
+    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+
+**返回值**：boolean - 是兄弟则返回 true，否则 false
+
+**示例**：
+
+```js
+import { isBrother } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        { id: '2', name: 'a' },
+        { id: '3', name: 'b' },
+        { id: '4', name: 'c' }
+    ]
+}
+
+// 检查 id 为 2 和 3 的节点是否为兄弟
+const areBrothers = isBrother(
+    tree,
+    (node) => node.id === 2,
+    (node) => node.id === 3
+)
+console.log(areBrothers) // 输出: true
+
+// 检查 id 为 2 和 4 的节点是否为兄弟
+const areBrothers2 = isBrother(
+    tree,
+    (node) => node.id === 2,
+    (node) => node.id === 4
+)
+console.log(areBrothers2) // 输出: true
+
+// 检查节点是否与自身为兄弟
+const areBrothers3 = isBrother(
+    tree,
+    (node) => node.id === 2,
+    (node) => node.id === 2
+)
+console.log(areBrothers3) // 输出: false
 ```
 
 ## 类型定义
