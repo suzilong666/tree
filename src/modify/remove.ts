@@ -59,7 +59,7 @@ export function remove(
                 result.push(root)
             }
         }
-        return result
+        return removed ? result : tree
     }
 
     // 单棵树
