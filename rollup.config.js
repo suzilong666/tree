@@ -1,6 +1,8 @@
 import fs from 'fs'
 import typescript from 'rollup-plugin-typescript2'
+import babel from '@rollup/plugin-babel'
 import terser from '@rollup/plugin-terser'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 // 使用 import.meta.url 构建正确的文件路径
 const pkg = JSON.parse(
@@ -23,6 +25,10 @@ export default {
         typescript({
             exclude: ['**/*.test.ts', '**/*.spec.ts'], // 排除测试文件
         }),
+        babel({
+            babelHelpers: 'bundled',
+            presets: [['@babel/preset-env', { targets: { ie: '11' } }]],
+        }),
         terser({
             compress: {
                 drop_console: true, // 移除 console.log
@@ -32,6 +38,10 @@ export default {
             output: {
                 comments: false, // 移除注释
             },
+        }),
+        visualizer({
+            filename: 'reports.html',
+            open: true, // 构建后自动打开报告
         }),
     ],
     external: Object.keys(pkg.dependencies || {}),
