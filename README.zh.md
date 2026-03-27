@@ -101,6 +101,7 @@ forEach(tree, (node) => {
     - [print](#print)
 - [7. 关系判断 (is)](#7-关系判断-is)
     - [isBrother](#isbrother)
+    - [isAncestorOf](#isancestorof)
 - [类型定义](#类型定义)
 
 ---
@@ -1192,8 +1193,8 @@ const tree = {
     children: [
         { id: '2', name: 'a' },
         { id: '3', name: 'b' },
-        { id: '4', name: 'c' }
-    ]
+        { id: '4', name: 'c' },
+    ],
 }
 
 // 检查 id 为 2 和 3 的节点是否为兄弟
@@ -1202,7 +1203,7 @@ const areBrothers = isBrother(
     (node) => node.id === 2,
     (node) => node.id === 3
 )
-console.log(areBrothers) // 输出: true
+console.log(areBrothers) // 输出：true
 
 // 检查 id 为 2 和 4 的节点是否为兄弟
 const areBrothers2 = isBrother(
@@ -1210,7 +1211,7 @@ const areBrothers2 = isBrother(
     (node) => node.id === 2,
     (node) => node.id === 4
 )
-console.log(areBrothers2) // 输出: true
+console.log(areBrothers2) // 输出：true
 
 // 检查节点是否与自身为兄弟
 const areBrothers3 = isBrother(
@@ -1218,7 +1219,69 @@ const areBrothers3 = isBrother(
     (node) => node.id === 2,
     (node) => node.id === 2
 )
-console.log(areBrothers3) // 输出: false
+console.log(areBrothers3) // 输出：false
+```
+
+#### isAncestorOf
+
+**功能**：判断 ancestor 节点是否是 descendant 节点的祖先（即 ancestor 在从根节点到 descendant 的路径上）
+
+**参数**：
+
+- `tree`: TreeNode | TreeNode[] - 树或森林
+- `ancestorPredicate`: (node: TreeNode) => boolean - 定位祖先节点的断言函数
+- `descendantPredicate`: (node: TreeNode) => boolean - 定位后代节点的断言函数
+- `options`: BaseOptions - 配置选项
+    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+
+**返回值**：boolean - 是祖先关系则返回 true，否则 false
+
+**示例**：
+
+```js
+import { isAncestorOf } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [{ id: '1-1-1' }],
+        },
+    ],
+}
+
+// 根节点是所有节点的祖先
+const isRootAncestor = isAncestorOf(
+    tree,
+    (node) => node.id === '1',
+    (node) => node.id === '1-1-1'
+)
+console.log(isRootAncestor) // 输出：true
+
+// 直接父节点是祖先
+const isParentAncestor = isAncestorOf(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1-1-1'
+)
+console.log(isParentAncestor) // 输出：true
+
+// 节点不能是自身的祖先
+const isSelfAncestor = isAncestorOf(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1-1'
+)
+console.log(isSelfAncestor) // 输出：false
+
+// 后代节点不能是祖先节点的祖先
+const isDescendantAncestor = isAncestorOf(
+    tree,
+    (node) => node.id === '1-1-1',
+    (node) => node.id === '1'
+)
+console.log(isDescendantAncestor) // 输出：false
 ```
 
 ## 类型定义

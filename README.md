@@ -101,6 +101,7 @@ forEach(tree, (node) => {
     - [print](#print)
 - [7. Relationship (is)](#7-relationship-is)
     - [isBrother](#isbrother)
+    - [isAncestorOf](#isancestorof)
 - [Type Definitions](#type-definitions)
 
 ---
@@ -1192,8 +1193,8 @@ const tree = {
     children: [
         { id: '2', name: 'a' },
         { id: '3', name: 'b' },
-        { id: '4', name: 'c' }
-    ]
+        { id: '4', name: 'c' },
+    ],
 }
 
 // Check if nodes with id 2 and 3 are brothers
@@ -1219,6 +1220,68 @@ const areBrothers3 = isBrother(
     (node) => node.id === 2
 )
 console.log(areBrothers3) // Output: false
+```
+
+#### isAncestorOf
+
+**Function**: Determines if ancestor node is an ancestor of descendant node (i.e., ancestor is on the path from root to descendant)
+
+**Parameters**:
+
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `ancestorPredicate`: (node: TreeNode) => boolean - Predicate function to locate the ancestor node
+- `descendantPredicate`: (node: TreeNode) => boolean - Predicate function to locate the descendant node
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+
+**Return Value**: boolean - Returns true if the ancestor relationship exists, otherwise false
+
+**Example**:
+
+```js
+import { isAncestorOf } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [{ id: '1-1-1' }],
+        },
+    ],
+}
+
+// Root is ancestor of all nodes
+const isRootAncestor = isAncestorOf(
+    tree,
+    (node) => node.id === '1',
+    (node) => node.id === '1-1-1'
+)
+console.log(isRootAncestor) // Output: true
+
+// Direct parent is ancestor
+const isParentAncestor = isAncestorOf(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1-1-1'
+)
+console.log(isParentAncestor) // Output: true
+
+// Node cannot be its own ancestor
+const isSelfAncestor = isAncestorOf(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1-1'
+)
+console.log(isSelfAncestor) // Output: false
+
+// Descendant cannot be ancestor of ancestor
+const isDescendantAncestor = isAncestorOf(
+    tree,
+    (node) => node.id === '1-1-1',
+    (node) => node.id === '1'
+)
+console.log(isDescendantAncestor) // Output: false
 ```
 
 ## Type Definitions
