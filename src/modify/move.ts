@@ -49,23 +49,13 @@ export function move(
         return tree
     }
 
-    let modify
-    switch (position) {
-        case 'append':
-            modify = appendChild
-            break
-        case 'prepend':
-            modify = prependChild
-            break
-        case 'before':
-            modify = insertBefore
-            break
-        case 'after':
-            modify = insertAfter
-            break
-        default:
-            modify = appendChild
-    }
+    const modify =
+        {
+            append: appendChild,
+            prepend: prependChild,
+            before: insertBefore,
+            after: insertAfter,
+        }[position] ?? appendChild
     let isMoved = false
     const result = modify(
         removedTree || [],
