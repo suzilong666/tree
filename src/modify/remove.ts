@@ -64,5 +64,5 @@ export function remove(
 
     // 单棵树
     const newRoot = processNode(tree)
-    return newRoot !== null ? newRoot : null
+    return removed ? newRoot : tree
 }
