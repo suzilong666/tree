@@ -93,6 +93,7 @@ forEach(tree, (node) => {
     - [getAncestors](#getancestors)
     - [getDescendants](#getdescendants)
     - [getSiblings](#getsiblings)
+    - [getParent](#getparent)
 - [6. 其他 (orther)](#6-其他-orther)
     - [clone](#clone)
     - [every](#every)
@@ -989,8 +990,43 @@ const tree = {
 }
 
 const siblings = getSiblings(tree, (node) => node.id === '1-2')
-console.log(siblings.length) // 输出: 2
-console.log(siblings.map((node) => node.id)) // 输出: ['1-1', '1-3']
+console.log(siblings.length) // 输出：2
+console.log(siblings.map((node) => node.id)) // 输出：['1-1', '1-3']
+```
+
+#### getParent
+
+**功能**：获取指定节点的父节点
+
+**参数**：
+
+- `tree`: TreeNode | TreeNode[] - 树或森林
+- `predicate`: (node: TreeNode) => boolean - 断言函数，用于定位目标节点
+- `options`: BaseOptions - 配置选项
+    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+
+**返回值**：TreeNode | null - 父节点，如果目标不存在或是根节点则返回 null
+
+**示例**：
+
+```js
+import { getParent } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [{ id: '1-1-1' }],
+        },
+    ],
+}
+
+const parent = getParent(tree, (node) => node.id === '1-1-1')
+console.log(parent?.id) // 输出：'1-1'
+
+const rootParent = getParent(tree, (node) => node.id === '1')
+console.log(rootParent) // 输出：null
 ```
 
 ### 6. 其他 (orther)

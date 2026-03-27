@@ -93,6 +93,7 @@ forEach(tree, (node) => {
     - [getAncestors](#getancestors)
     - [getDescendants](#getdescendants)
     - [getSiblings](#getsiblings)
+    - [getParent](#getparent)
 - [6. Other (other)](#6-other-other)
     - [clone](#clone)
     - [every](#every)
@@ -991,6 +992,41 @@ const tree = {
 const siblings = getSiblings(tree, (node) => node.id === '1-2')
 console.log(siblings.length) // Output: 2
 console.log(siblings.map((node) => node.id)) // Output: ['1-1', '1-3']
+```
+
+#### getParent
+
+**Function**: Gets the parent node of the specified node
+
+**Parameters**:
+
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `predicate`: (node: TreeNode) => boolean - Predicate function to locate the target node
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+
+**Return Value**: TreeNode | null - Parent node, returns null if the target doesn't exist or is a root node
+
+**Example**:
+
+```js
+import { getParent } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [{ id: '1-1-1' }],
+        },
+    ],
+}
+
+const parent = getParent(tree, (node) => node.id === '1-1-1')
+console.log(parent?.id) // Output: '1-1'
+
+const rootParent = getParent(tree, (node) => node.id === '1')
+console.log(rootParent) // Output: null
 ```
 
 ### 6. Other (other)
