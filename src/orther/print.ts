@@ -1,6 +1,7 @@
 // utils/printTree.ts
 import { TreeNode, BaseOptions } from '../types'
 import { DEFAULT_CHILDREN_KEY } from '../constants'
+import { ensureArray } from '../utils/array'
 
 /**
  * 以 Linux tree 命令风格打印树，直接输出节点对象（可点击展开）
@@ -13,7 +14,7 @@ export function print(
 ): void {
     const { childrenKey = DEFAULT_CHILDREN_KEY } = options
 
-    const nodes = Array.isArray(tree) ? tree : [tree]
+    const nodes = ensureArray(tree)
 
     /**
      * 递归打印单个节点及其子树
