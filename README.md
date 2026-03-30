@@ -102,6 +102,7 @@ forEach(tree, (node) => {
 - [7. Relationship (is)](#7-relationship-is)
     - [isBrother](#isbrother)
     - [isAncestorOf](#isancestorof)
+    - [isSameDepth](#issamedepth)
 - [Type Definitions](#type-definitions)
 
 ---
@@ -1282,6 +1283,94 @@ const isDescendantAncestor = isAncestorOf(
     (node) => node.id === '1'
 )
 console.log(isDescendantAncestor) // Output: false
+```
+
+#### isSameDepth
+
+**Function**: Determines if two nodes are at the same depth (i.e., same level in the tree)
+
+**Parameters**:
+
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `predicateA`: (node: TreeNode) => boolean - Predicate function to locate the first node
+- `predicateB`: (node: TreeNode) => boolean - Predicate function to locate the second node
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+
+**Return Value**: boolean - Returns true if both nodes are at the same depth, otherwise false
+
+**Example**:
+
+```js
+import { isSameDepth } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [
+                { id: '1-1-1' },
+                { id: '1-1-2' },
+            ],
+        },
+        {
+            id: '1-2',
+        },
+    ],
+}
+
+// Nodes '1-1' and '1-2' are both at depth 1
+const sameDepth1 = isSameDepth(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1-2'
+)
+console.log(sameDepth1) // Output: true
+
+// Nodes '1-1-1' and '1-1-2' are both at depth 2
+const sameDepth2 = isSameDepth(
+    tree,
+    (node) => node.id === '1-1-1',
+    (node) => node.id === '1-1-2'
+)
+console.log(sameDepth2) // Output: true
+
+// Nodes at different depths ('1' at depth 0, '1-1' at depth 1)
+const sameDepth3 = isSameDepth(
+    tree,
+    (node) => node.id === '1',
+    (node) => node.id === '1-1'
+)
+console.log(sameDepth3) // Output: false
+
+// Forest: nodes in different trees but same depth
+const forest = [
+    { id: 'A', children: [{ id: 'A1' }] },
+    { id: 'B', children: [{ id: 'B1' }] },
+]
+const sameDepthInForest = isSameDepth(
+    forest,
+    (node) => node.id === 'A',
+    (node) => node.id === 'B'
+)
+console.log(sameDepthInForest) // Output: true (both at depth 0)
+
+// Custom childrenKey
+const customTree = {
+    id: 'root',
+    subs: [
+        { id: 'child1', subs: [{ id: 'grandchild1' }] },
+        { id: 'child2' },
+    ],
+}
+const sameDepthCustom = isSameDepth(
+    customTree,
+    (node) => node.id === 'child1',
+    (node) => node.id === 'child2',
+    { childrenKey: 'subs' }
+)
+console.log(sameDepthCustom) // Output: true
 ```
 
 ## Type Definitions

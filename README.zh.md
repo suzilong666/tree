@@ -102,6 +102,7 @@ forEach(tree, (node) => {
 - [7. 关系判断 (is)](#7-关系判断-is)
     - [isBrother](#isbrother)
     - [isAncestorOf](#isancestorof)
+    - [isSameDepth](#issamedepth)
 - [类型定义](#类型定义)
 
 ---
@@ -1282,6 +1283,94 @@ const isDescendantAncestor = isAncestorOf(
     (node) => node.id === '1'
 )
 console.log(isDescendantAncestor) // 输出：false
+```
+
+#### isSameDepth
+
+**功能**：判断两个节点是否在同一深度（即同一层）
+
+**参数**：
+
+- `tree`: TreeNode | TreeNode[] - 树或森林
+- `predicateA`: (node: TreeNode) => boolean - 定位第一个节点的断言函数
+- `predicateB`: (node: TreeNode) => boolean - 定位第二个节点的断言函数
+- `options`: BaseOptions - 配置选项
+    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+
+**返回值**：boolean - 如果两个节点深度相同则返回 true，否则 false
+
+**示例**：
+
+```js
+import { isSameDepth } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [
+                { id: '1-1-1' },
+                { id: '1-1-2' },
+            ],
+        },
+        {
+            id: '1-2',
+        },
+    ],
+}
+
+// 节点 '1-1' 和 '1-2' 深度均为 1
+const sameDepth1 = isSameDepth(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1-2'
+)
+console.log(sameDepth1) // 输出：true
+
+// 节点 '1-1-1' 和 '1-1-2' 深度均为 2
+const sameDepth2 = isSameDepth(
+    tree,
+    (node) => node.id === '1-1-1',
+    (node) => node.id === '1-1-2'
+)
+console.log(sameDepth2) // 输出：true
+
+// 不同深度的节点（'1' 深度 0，'1-1' 深度 1）
+const sameDepth3 = isSameDepth(
+    tree,
+    (node) => node.id === '1',
+    (node) => node.id === '1-1'
+)
+console.log(sameDepth3) // 输出：false
+
+// 森林：不同树中但同一深度的节点
+const forest = [
+    { id: 'A', children: [{ id: 'A1' }] },
+    { id: 'B', children: [{ id: 'B1' }] },
+]
+const sameDepthInForest = isSameDepth(
+    forest,
+    (node) => node.id === 'A',
+    (node) => node.id === 'B'
+)
+console.log(sameDepthInForest) // 输出：true（深度均为 0）
+
+// 自定义 childrenKey
+const customTree = {
+    id: 'root',
+    subs: [
+        { id: 'child1', subs: [{ id: 'grandchild1' }] },
+        { id: 'child2' },
+    ],
+}
+const sameDepthCustom = isSameDepth(
+    customTree,
+    (node) => node.id === 'child1',
+    (node) => node.id === 'child2',
+    { childrenKey: 'subs' }
+)
+console.log(sameDepthCustom) // 输出：true
 ```
 
 ## 类型定义
