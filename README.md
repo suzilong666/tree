@@ -103,6 +103,8 @@ forEach(tree, (node) => {
     - [isBrother](#isbrother)
     - [isAncestorOf](#isancestorof)
     - [isDescendantOf](#isdescendantof)
+    - [isParentOf](#isparentof)
+    - [isChildOf](#ischildof)
     - [isSameDepth](#issamedepth)
 - [Type Definitions](#type-definitions)
 
@@ -1365,9 +1367,162 @@ const isGrandchildDescendant = isDescendantOf(
 console.log(isGrandchildDescendant) // Output: true
 ```
 
-#### isSameDepth
+#### isParentOf
 
-**Function**: Determines if two nodes are at the same depth (i.e., same level in the tree)
+**Function**: Determines if parent node is the direct parent of child node
+
+**Parameters**:
+
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `parentPredicate`: (node: TreeNode) => boolean - Predicate function to locate the parent node
+- `childPredicate`: (node: TreeNode) => boolean - Predicate function to locate the child node
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+
+**Return Value**: boolean - Returns true if it's a direct parent-child relationship, otherwise false
+
+**Example**:
+
+```js
+import { isParentOf } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [{ id: '1-1-1' }],
+        },
+    ],
+}
+
+// Direct parent
+const isDirectParent = isParentOf(
+    tree,
+    (node) => node.id === '1',
+    (node) => node.id === '1-1'
+)
+console.log(isDirectParent) // Output: true
+
+// Grandparent is not direct parent
+const isGrandparentParent = isParentOf(
+    tree,
+    (node) => node.id === '1',
+    (node) => node.id === '1-1-1'
+)
+console.log(isGrandparentParent) // Output: false
+
+// Siblings are not in parent-child relationship
+const isSiblingParent = isParentOf(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1-1-1'
+)
+console.log(isSiblingParent) // Output: false
+
+// Reverse relationship doesn't hold
+const isReverseParent = isParentOf(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1'
+)
+console.log(isReverseParent) // Output: false
+
+// Custom childrenKey
+const customTree = {
+    id: 'root',
+    subs: [{ id: 'child1', subs: [{ id: 'grandchild1' }] }, { id: 'child2' }],
+}
+const isCustomParent = isParentOf(
+    customTree,
+    (node) => node.id === 'root',
+    (node) => node.id === 'child1',
+    { childrenKey: 'subs' }
+)
+console.log(isCustomParent) // Output: true
+```
+
+#### isChildOf
+
+**Function**: Determines if child node is the direct child of parent node
+
+**Parameters**:
+
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `childPredicate`: (node: TreeNode) => boolean - Predicate function to locate the child node
+- `parentPredicate`: (node: TreeNode) => boolean - Predicate function to locate the parent node
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+
+**Return Value**: boolean - Returns true if it's a direct parent-child relationship, otherwise false
+
+**Example**:
+
+```js
+import { isChildOf } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [{ id: '1-1-1' }],
+        },
+    ],
+}
+
+// Direct child
+const isDirectChild = isChildOf(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1'
+)
+console.log(isDirectChild) // Output: true
+
+// Grandchild is not direct child
+const isGrandchildChild = isChildOf(
+    tree,
+    (node) => node.id === '1-1-1',
+    (node) => node.id === '1'
+)
+console.log(isGrandchildChild) // Output: false
+
+// Reverse relationship doesn't hold
+const isReverseChild = isChildOf(
+    tree,
+    (node) => node.id === '1',
+    (node) => node.id === '1-1'
+)
+console.log(isReverseChild) // Output: false
+
+// Symmetry with isParentOf
+const isParent = isParentOf(
+    tree,
+    (node) => node.id === '1',
+    (node) => node.id === '1-1'
+)
+const isChild = isChildOf(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1'
+)
+console.log(isParent === isChild) // Output: true
+
+// Custom childrenKey
+const customTree = {
+    id: 'root',
+    subs: [{ id: 'child1', subs: [{ id: 'grandchild1' }] }, { id: 'child2' }],
+}
+const isCustomChild = isChildOf(
+    customTree,
+    (node) => node.id === 'child1',
+    (node) => node.id === 'root',
+    { childrenKey: 'subs' }
+)
+console.log(isCustomChild) // Output: true
+```
+
+#### isSameDepth
 
 **Parameters**:
 

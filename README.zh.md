@@ -103,6 +103,8 @@ forEach(tree, (node) => {
     - [isBrother](#isbrother)
     - [isAncestorOf](#isancestorof)
     - [isDescendantOf](#isdescendantof)
+    - [isParentOf](#isparentof)
+    - [isChildOf](#ischildof)
     - [isSameDepth](#issamedepth)
 - [类型定义](#类型定义)
 
@@ -1363,6 +1365,161 @@ const isGrandchildDescendant = isDescendantOf(
     (node) => node.id === 'root'
 )
 console.log(isGrandchildDescendant) // 输出：true
+```
+
+#### isParentOf
+
+**功能**：判断 parent 节点是否是 child 节点的直接父节点
+
+**参数**：
+
+- `tree`: TreeNode | TreeNode[] - 树或森林
+- `parentPredicate`: (node: TreeNode) => boolean - 定位父节点的断言函数
+- `childPredicate`: (node: TreeNode) => boolean - 定位子节点的断言函数
+- `options`: BaseOptions - 配置选项
+    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+
+**返回值**：boolean - 是直接父子关系则返回 true，否则 false
+
+**示例**：
+
+```js
+import { isParentOf } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [{ id: '1-1-1' }],
+        },
+    ],
+}
+
+// 直接父节点
+const isDirectParent = isParentOf(
+    tree,
+    (node) => node.id === '1',
+    (node) => node.id === '1-1'
+)
+console.log(isDirectParent) // 输出：true
+
+// 祖父节点不是直接父节点
+const isGrandparentParent = isParentOf(
+    tree,
+    (node) => node.id === '1',
+    (node) => node.id === '1-1-1'
+)
+console.log(isGrandparentParent) // 输出：false
+
+// 兄弟节点之间不是父子关系
+const isSiblingParent = isParentOf(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1-1-1'
+)
+console.log(isSiblingParent) // 输出：false
+
+// 反向关系不成立
+const isReverseParent = isParentOf(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1'
+)
+console.log(isReverseParent) // 输出：false
+
+// 自定义 childrenKey
+const customTree = {
+    id: 'root',
+    subs: [{ id: 'child1', subs: [{ id: 'grandchild1' }] }, { id: 'child2' }],
+}
+const isCustomParent = isParentOf(
+    customTree,
+    (node) => node.id === 'root',
+    (node) => node.id === 'child1',
+    { childrenKey: 'subs' }
+)
+console.log(isCustomParent) // 输出：true
+```
+
+#### isChildOf
+
+**功能**：判断 child 节点是否是 parent 节点的直接子节点
+
+**参数**：
+
+- `tree`: TreeNode | TreeNode[] - 树或森林
+- `childPredicate`: (node: TreeNode) => boolean - 定位子节点的断言函数
+- `parentPredicate`: (node: TreeNode) => boolean - 定位父节点的断言函数
+- `options`: BaseOptions - 配置选项
+    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+
+**返回值**：boolean - 是直接父子关系则返回 true，否则 false
+
+**示例**：
+
+```js
+import { isChildOf } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [{ id: '1-1-1' }],
+        },
+    ],
+}
+
+// 直接子节点
+const isDirectChild = isChildOf(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1'
+)
+console.log(isDirectChild) // 输出：true
+
+// 孙子节点不是直接子节点
+const isGrandchildChild = isChildOf(
+    tree,
+    (node) => node.id === '1-1-1',
+    (node) => node.id === '1'
+)
+console.log(isGrandchildChild) // 输出：false
+
+// 反向关系不成立
+const isReverseChild = isChildOf(
+    tree,
+    (node) => node.id === '1',
+    (node) => node.id === '1-1'
+)
+console.log(isReverseChild) // 输出：false
+
+// 与 isParentOf 的对称性
+const isParent = isParentOf(
+    tree,
+    (node) => node.id === '1',
+    (node) => node.id === '1-1'
+)
+const isChild = isChildOf(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1'
+)
+console.log(isParent === isChild) // 输出：true
+
+// 自定义 childrenKey
+const customTree = {
+    id: 'root',
+    subs: [{ id: 'child1', subs: [{ id: 'grandchild1' }] }, { id: 'child2' }],
+}
+const isCustomChild = isChildOf(
+    customTree,
+    (node) => node.id === 'child1',
+    (node) => node.id === 'root',
+    { childrenKey: 'subs' }
+)
+console.log(isCustomChild) // 输出：true
 ```
 
 #### isSameDepth

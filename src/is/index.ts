@@ -1,4 +1,6 @@
 export * from './isBrother'
 export * from './isAncestorOf'
-export * from './isSameDepth'
 export * from './isDescendantOf'
+export * from './isParentOf'
+export * from './isChildOf'
+export * from './isSameDepth'
