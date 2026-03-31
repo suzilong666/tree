@@ -1,4 +1,4 @@
-// relation/isBrother.ts
+// relation/isSibling.ts
 import { TreeNode, BaseOptions } from '../types'
 import { getParent } from '../query/getParent'
 
@@ -10,7 +10,7 @@ import { getParent } from '../query/getParent'
  * @param options 配置选项
  * @returns 是兄弟则返回 true，否则 false
  */
-export function isBrother(
+export function isSibling(
     tree: TreeNode | TreeNode[],
     predicateA: (node: TreeNode) => boolean,
     predicateB: (node: TreeNode) => boolean,

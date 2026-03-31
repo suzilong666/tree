@@ -1,8 +1,8 @@
-// relation/isBrother.test.ts
-import { isBrother } from '../isBrother'
+// relation/isSibling.test.ts
+import { isSibling } from '../isSibling'
 import { TreeNode } from '../../types'
 
-describe('isBrother 判断兄弟节点', () => {
+describe('isSibling 判断兄弟节点', () => {
     // 测试树结构
     const tree: TreeNode = {
         id: 1,
@@ -15,7 +15,7 @@ describe('isBrother 判断兄弟节点', () => {
 
     it('同一父节点下的两个节点应返回 true', () => {
         expect(
-            isBrother(
+            isSibling(
                 tree,
                 (n) => n.id === 2,
                 (n) => n.id === 3
@@ -25,7 +25,7 @@ describe('isBrother 判断兄弟节点', () => {
 
     it('不同父节点下的节点应返回 false', () => {
         expect(
-            isBrother(
+            isSibling(
                 tree,
                 (n) => n.id === 4,
                 (n) => n.id === 3
@@ -35,7 +35,7 @@ describe('isBrother 判断兄弟节点', () => {
 
     it('根节点与任何节点都不为兄弟', () => {
         expect(
-            isBrother(
+            isSibling(
                 tree,
                 (n) => n.id === 1,
                 (n) => n.id === 2
@@ -45,7 +45,7 @@ describe('isBrother 判断兄弟节点', () => {
 
     it('同一节点不应视为兄弟', () => {
         expect(
-            isBrother(
+            isSibling(
                 tree,
                 (n) => n.id === 2,
                 (n) => n.id === 2
@@ -55,7 +55,7 @@ describe('isBrother 判断兄弟节点', () => {
 
     it('任一节点不存在应返回 false', () => {
         expect(
-            isBrother(
+            isSibling(
                 tree,
                 (n) => n.id === 2,
                 (n) => n.id === 999
@@ -69,7 +69,7 @@ describe('isBrother 判断兄弟节点', () => {
             subs: [{ id: 'a', subs: [{ id: 'a1' }] }, { id: 'b' }],
         }
         expect(
-            isBrother(
+            isSibling(
                 customTree,
                 (n) => n.id === 'a',
                 (n) => n.id === 'b',
@@ -84,7 +84,7 @@ describe('isBrother 判断兄弟节点', () => {
             { id: 3, children: [{ id: 4 }] },
         ]
         expect(
-            isBrother(
+            isSibling(
                 forest,
                 (n) => n.id === 2,
                 (n) => n.id === 4
@@ -98,7 +98,7 @@ describe('isBrother 判断兄弟节点', () => {
             { id: 4 },
         ]
         expect(
-            isBrother(
+            isSibling(
                 forest,
                 (n) => n.id === 2,
                 (n) => n.id === 3

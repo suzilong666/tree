@@ -100,7 +100,7 @@ forEach(tree, (node) => {
     - [some](#some)
     - [print](#print)
 - [7. 关系判断 (is)](#7-关系判断-is)
-    - [isBrother](#isbrother)
+    - [isSibling](#isSibling)
     - [isAncestorOf](#isancestorof)
     - [isDescendantOf](#isdescendantof)
     - [isParentOf](#isparentof)
@@ -1175,7 +1175,7 @@ print(tree, { childrenKey: 'children' })
 
 ### 7. 关系判断 (is)
 
-#### isBrother
+#### isSibling
 
 **功能**：判断两个节点是否为兄弟节点（即具有相同的父节点）
 
@@ -1192,7 +1192,7 @@ print(tree, { childrenKey: 'children' })
 **示例**：
 
 ```js
-import { isBrother } from '@suzilong/tree'
+import { isSibling } from '@suzilong/tree'
 
 const tree = {
     id: '1',
@@ -1204,7 +1204,7 @@ const tree = {
 }
 
 // 检查 id 为 2 和 3 的节点是否为兄弟
-const areBrothers = isBrother(
+const areBrothers = isSibling(
     tree,
     (node) => node.id === 2,
     (node) => node.id === 3
@@ -1212,7 +1212,7 @@ const areBrothers = isBrother(
 console.log(areBrothers) // 输出：true
 
 // 检查 id 为 2 和 4 的节点是否为兄弟
-const areBrothers2 = isBrother(
+const areBrothers2 = isSibling(
     tree,
     (node) => node.id === 2,
     (node) => node.id === 4
@@ -1220,7 +1220,7 @@ const areBrothers2 = isBrother(
 console.log(areBrothers2) // 输出：true
 
 // 检查节点是否与自身为兄弟
-const areBrothers3 = isBrother(
+const areBrothers3 = isSibling(
     tree,
     (node) => node.id === 2,
     (node) => node.id === 2
@@ -1622,10 +1622,7 @@ const isEmptyChildrenLeaf = isLeaf(tree, (node) => node.id === '1-2')
 console.log(isEmptyChildrenLeaf) // 输出：true
 
 // 森林中的叶子节点
-const forest = [
-    { id: 'A', children: [{ id: 'A1' }] },
-    { id: 'B' },
-]
+const forest = [{ id: 'A', children: [{ id: 'A1' }] }, { id: 'B' }]
 const isLeafInForest = isLeaf(forest, (node) => node.id === 'B')
 console.log(isLeafInForest) // 输出：true
 

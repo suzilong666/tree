@@ -100,7 +100,7 @@ forEach(tree, (node) => {
     - [some](#some)
     - [print](#print)
 - [7. Relationship (is)](#7-relationship-is)
-    - [isBrother](#isbrother)
+    - [isSibling](#isSibling)
     - [isAncestorOf](#isancestorof)
     - [isDescendantOf](#isdescendantof)
     - [isParentOf](#isparentof)
@@ -1175,7 +1175,7 @@ print(tree, { childrenKey: 'children' })
 
 ### 7. Relationship (is)
 
-#### isBrother
+#### isSibling
 
 **Function**: Determines if two nodes are brothers (i.e., have the same parent)
 
@@ -1192,7 +1192,7 @@ print(tree, { childrenKey: 'children' })
 **Example**:
 
 ```js
-import { isBrother } from '@suzilong/tree'
+import { isSibling } from '@suzilong/tree'
 
 const tree = {
     id: '1',
@@ -1204,7 +1204,7 @@ const tree = {
 }
 
 // Check if nodes with id 2 and 3 are brothers
-const areBrothers = isBrother(
+const areBrothers = isSibling(
     tree,
     (node) => node.id === 2,
     (node) => node.id === 3
@@ -1212,7 +1212,7 @@ const areBrothers = isBrother(
 console.log(areBrothers) // Output: true
 
 // Check if nodes with id 2 and 4 are brothers
-const areBrothers2 = isBrother(
+const areBrothers2 = isSibling(
     tree,
     (node) => node.id === 2,
     (node) => node.id === 4
@@ -1220,7 +1220,7 @@ const areBrothers2 = isBrother(
 console.log(areBrothers2) // Output: true
 
 // Check if a node is a brother to itself
-const areBrothers3 = isBrother(
+const areBrothers3 = isSibling(
     tree,
     (node) => node.id === 2,
     (node) => node.id === 2
@@ -1622,10 +1622,7 @@ const isEmptyChildrenLeaf = isLeaf(tree, (node) => node.id === '1-2')
 console.log(isEmptyChildrenLeaf) // Output: true
 
 // Leaf nodes in forest
-const forest = [
-    { id: 'A', children: [{ id: 'A1' }] },
-    { id: 'B' },
-]
+const forest = [{ id: 'A', children: [{ id: 'A1' }] }, { id: 'B' }]
 const isLeafInForest = isLeaf(forest, (node) => node.id === 'B')
 console.log(isLeafInForest) // Output: true
 
