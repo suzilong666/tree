@@ -94,6 +94,7 @@ forEach(tree, (node) => {
     - [getDescendants](#getdescendants)
     - [getSiblings](#getsiblings)
     - [getParent](#getparent)
+    - [getChildren](#getchildren)
 - [6. Other (other)](#6-other-other)
     - [clone](#clone)
     - [every](#every)
@@ -1034,6 +1035,64 @@ console.log(parent?.id) // Output: '1-1'
 
 const rootParent = getParent(tree, (node) => node.id === '1')
 console.log(rootParent) // Output: null
+```
+
+#### getChildren
+
+**Function**: Gets all child nodes of the specified node
+
+**Parameters**:
+
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `predicate`: (node: TreeNode) => boolean - Predicate function to locate the target node
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+
+**Return Value**: TreeNode[] - Child node array, returns empty array if the target doesn't exist or has no children
+
+**Example**:
+
+```js
+import { getChildren } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [{ id: '1-1-1' }],
+        },
+        {
+            id: '1-2',
+        },
+    ],
+}
+
+// Get children of root node
+const children = getChildren(tree, (node) => node.id === '1')
+console.log(children.map((node) => node.id)) // Output: ['1-1', '1-2']
+
+// Get children of internal node
+const internalChildren = getChildren(tree, (node) => node.id === '1-1')
+console.log(internalChildren.map((node) => node.id)) // Output: ['1-1-1']
+
+// Leaf node has no children
+const leafChildren = getChildren(tree, (node) => node.id === '1-1-1')
+console.log(leafChildren) // Output: []
+
+// Target node doesn't exist
+const notFoundChildren = getChildren(tree, (node) => node.id === '999')
+console.log(notFoundChildren) // Output: []
+
+// Custom childrenKey
+const customTree = {
+    id: 'root',
+    subs: [{ id: 'child1' }, { id: 'child2' }],
+}
+const customChildren = getChildren(customTree, (node) => node.id === 'root', {
+    childrenKey: 'subs',
+})
+console.log(customChildren.map((node) => node.id)) // Output: ['child1', 'child2']
 ```
 
 ### 6. Other (other)

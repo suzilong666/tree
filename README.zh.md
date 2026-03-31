@@ -94,6 +94,7 @@ forEach(tree, (node) => {
     - [getDescendants](#getdescendants)
     - [getSiblings](#getsiblings)
     - [getParent](#getparent)
+    - [getChildren](#getchildren)
 - [6. 其他 (orther)](#6-其他-orther)
     - [clone](#clone)
     - [every](#every)
@@ -1034,6 +1035,64 @@ console.log(parent?.id) // 输出：'1-1'
 
 const rootParent = getParent(tree, (node) => node.id === '1')
 console.log(rootParent) // 输出：null
+```
+
+#### getChildren
+
+**功能**：获取指定节点的所有子节点
+
+**参数**：
+
+- `tree`: TreeNode | TreeNode[] - 树或森林
+- `predicate`: (node: TreeNode) => boolean - 断言函数，用于定位目标节点
+- `options`: BaseOptions - 配置选项
+    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+
+**返回值**：TreeNode[] - 子节点数组，如果目标不存在或没有子节点则返回空数组
+
+**示例**：
+
+```js
+import { getChildren } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [{ id: '1-1-1' }],
+        },
+        {
+            id: '1-2',
+        },
+    ],
+}
+
+// 获取根节点的子节点
+const children = getChildren(tree, (node) => node.id === '1')
+console.log(children.map((node) => node.id)) // 输出：['1-1', '1-2']
+
+// 获取中间节点的子节点
+const internalChildren = getChildren(tree, (node) => node.id === '1-1')
+console.log(internalChildren.map((node) => node.id)) // 输出：['1-1-1']
+
+// 叶子节点没有子节点
+const leafChildren = getChildren(tree, (node) => node.id === '1-1-1')
+console.log(leafChildren) // 输出：[]
+
+// 目标节点不存在
+const notFoundChildren = getChildren(tree, (node) => node.id === '999')
+console.log(notFoundChildren) // 输出：[]
+
+// 自定义 childrenKey
+const customTree = {
+    id: 'root',
+    subs: [{ id: 'child1' }, { id: 'child2' }],
+}
+const customChildren = getChildren(customTree, (node) => node.id === 'root', {
+    childrenKey: 'subs',
+})
+console.log(customChildren.map((node) => node.id)) // 输出：['child1', 'child2']
 ```
 
 ### 6. 其他 (orther)
