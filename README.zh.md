@@ -102,6 +102,7 @@ forEach(tree, (node) => {
 - [7. 关系判断 (is)](#7-关系判断-is)
     - [isBrother](#isbrother)
     - [isAncestorOf](#isancestorof)
+    - [isDescendantOf](#isdescendantof)
     - [isSameDepth](#issamedepth)
 - [类型定义](#类型定义)
 
@@ -1285,6 +1286,85 @@ const isDescendantAncestor = isAncestorOf(
 console.log(isDescendantAncestor) // 输出：false
 ```
 
+#### isDescendantOf
+
+**功能**：判断 descendant 节点是否是 ancestor 节点的后代（即 descendant 在 ancestor 的子树中）
+
+**参数**：
+
+- `tree`: TreeNode | TreeNode[] - 树或森林
+- `descendantPredicate`: (node: TreeNode) => boolean - 定位后代节点的断言函数
+- `ancestorPredicate`: (node: TreeNode) => boolean - 定位祖先节点的断言函数
+- `options`: BaseOptions - 配置选项
+    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+
+**返回值**：boolean - 是后代关系则返回 true，否则 false
+
+**示例**：
+
+```js
+import { isDescendantOf } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [{ id: '1-1-1' }],
+        },
+    ],
+}
+
+// 叶子节点是根节点的后代
+const isLeafDescendant = isDescendantOf(
+    tree,
+    (node) => node.id === '1-1-1',
+    (node) => node.id === '1'
+)
+console.log(isLeafDescendant) // 输出：true
+
+// 直接子节点是后代
+const isChildDescendant = isDescendantOf(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1'
+)
+console.log(isChildDescendant) // 输出：true
+
+// 节点不能是自身的后代
+const isSelfDescendant = isDescendantOf(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1-1'
+)
+console.log(isSelfDescendant) // 输出：false
+
+// 祖先节点不能是后代节点的后代
+const isAncestorDescendant = isDescendantOf(
+    tree,
+    (node) => node.id === '1',
+    (node) => node.id === '1-1-1'
+)
+console.log(isAncestorDescendant) // 输出：false
+
+// 跨层比较（孙子节点是祖父节点的后代）
+const tree2 = {
+    id: 'root',
+    children: [
+        {
+            id: 'child',
+            children: [{ id: 'grandchild' }],
+        },
+    ],
+}
+const isGrandchildDescendant = isDescendantOf(
+    tree2,
+    (node) => node.id === 'grandchild',
+    (node) => node.id === 'root'
+)
+console.log(isGrandchildDescendant) // 输出：true
+```
+
 #### isSameDepth
 
 **功能**：判断两个节点是否在同一深度（即同一层）
@@ -1309,10 +1389,7 @@ const tree = {
     children: [
         {
             id: '1-1',
-            children: [
-                { id: '1-1-1' },
-                { id: '1-1-2' },
-            ],
+            children: [{ id: '1-1-1' }, { id: '1-1-2' }],
         },
         {
             id: '1-2',
@@ -1359,10 +1436,7 @@ console.log(sameDepthInForest) // 输出：true（深度均为 0）
 // 自定义 childrenKey
 const customTree = {
     id: 'root',
-    subs: [
-        { id: 'child1', subs: [{ id: 'grandchild1' }] },
-        { id: 'child2' },
-    ],
+    subs: [{ id: 'child1', subs: [{ id: 'grandchild1' }] }, { id: 'child2' }],
 }
 const sameDepthCustom = isSameDepth(
     customTree,

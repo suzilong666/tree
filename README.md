@@ -102,6 +102,7 @@ forEach(tree, (node) => {
 - [7. Relationship (is)](#7-relationship-is)
     - [isBrother](#isbrother)
     - [isAncestorOf](#isancestorof)
+    - [isDescendantOf](#isdescendantof)
     - [isSameDepth](#issamedepth)
 - [Type Definitions](#type-definitions)
 
@@ -1285,6 +1286,85 @@ const isDescendantAncestor = isAncestorOf(
 console.log(isDescendantAncestor) // Output: false
 ```
 
+#### isDescendantOf
+
+**Function**: Determines if descendant node is a descendant of ancestor node (i.e., descendant is in the subtree of ancestor)
+
+**Parameters**:
+
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `descendantPredicate`: (node: TreeNode) => boolean - Predicate function to locate the descendant node
+- `ancestorPredicate`: (node: TreeNode) => boolean - Predicate function to locate the ancestor node
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+
+**Return Value**: boolean - Returns true if the descendant relationship exists, otherwise false
+
+**Example**:
+
+```js
+import { isDescendantOf } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [{ id: '1-1-1' }],
+        },
+    ],
+}
+
+// Leaf node is descendant of root
+const isLeafDescendant = isDescendantOf(
+    tree,
+    (node) => node.id === '1-1-1',
+    (node) => node.id === '1'
+)
+console.log(isLeafDescendant) // Output: true
+
+// Direct child is descendant
+const isChildDescendant = isDescendantOf(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1'
+)
+console.log(isChildDescendant) // Output: true
+
+// Node cannot be its own descendant
+const isSelfDescendant = isDescendantOf(
+    tree,
+    (node) => node.id === '1-1',
+    (node) => node.id === '1-1'
+)
+console.log(isSelfDescendant) // Output: false
+
+// Ancestor cannot be descendant of descendant
+const isAncestorDescendant = isDescendantOf(
+    tree,
+    (node) => node.id === '1',
+    (node) => node.id === '1-1-1'
+)
+console.log(isAncestorDescendant) // Output: false
+
+// Cross-level comparison (grandchild is descendant of grandparent)
+const tree2 = {
+    id: 'root',
+    children: [
+        {
+            id: 'child',
+            children: [{ id: 'grandchild' }],
+        },
+    ],
+}
+const isGrandchildDescendant = isDescendantOf(
+    tree2,
+    (node) => node.id === 'grandchild',
+    (node) => node.id === 'root'
+)
+console.log(isGrandchildDescendant) // Output: true
+```
+
 #### isSameDepth
 
 **Function**: Determines if two nodes are at the same depth (i.e., same level in the tree)
@@ -1309,10 +1389,7 @@ const tree = {
     children: [
         {
             id: '1-1',
-            children: [
-                { id: '1-1-1' },
-                { id: '1-1-2' },
-            ],
+            children: [{ id: '1-1-1' }, { id: '1-1-2' }],
         },
         {
             id: '1-2',
@@ -1359,10 +1436,7 @@ console.log(sameDepthInForest) // Output: true (both at depth 0)
 // Custom childrenKey
 const customTree = {
     id: 'root',
-    subs: [
-        { id: 'child1', subs: [{ id: 'grandchild1' }] },
-        { id: 'child2' },
-    ],
+    subs: [{ id: 'child1', subs: [{ id: 'grandchild1' }] }, { id: 'child2' }],
 }
 const sameDepthCustom = isSameDepth(
     customTree,
