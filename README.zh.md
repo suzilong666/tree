@@ -105,6 +105,8 @@ forEach(tree, (node) => {
     - [isDescendantOf](#isdescendantof)
     - [isParentOf](#isparentof)
     - [isChildOf](#ischildof)
+    - [isRoot](#isroot)
+    - [isLeaf](#isleaf)
     - [isSameDepth](#issamedepth)
 - [类型定义](#类型定义)
 
@@ -1520,6 +1522,117 @@ const isCustomChild = isChildOf(
     { childrenKey: 'subs' }
 )
 console.log(isCustomChild) // 输出：true
+```
+
+#### isRoot
+
+**功能**：判断节点是否为根节点（即没有父节点）
+
+**参数**：
+
+- `tree`: TreeNode | TreeNode[] - 树或森林
+- `predicate`: (node: TreeNode) => boolean - 定位节点的断言函数
+- `options`: BaseOptions - 配置选项
+    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+
+**返回值**：boolean - 是根节点则返回 true，否则 false
+
+**示例**：
+
+```js
+import { isRoot } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [{ id: '1-1-1' }],
+        },
+    ],
+}
+
+// 根节点
+const isRootNode = isRoot(tree, (node) => node.id === '1')
+console.log(isRootNode) // 输出：true
+
+// 非根节点
+const isNotRoot = isRoot(tree, (node) => node.id === '1-1')
+console.log(isNotRoot) // 输出：false
+
+// 叶子节点不是根节点
+const isLeafNotRoot = isRoot(tree, (node) => node.id === '1-1-1')
+console.log(isLeafNotRoot) // 输出：false
+
+// 森林中的根节点
+const forest = [
+    { id: 'A', children: [{ id: 'A1' }] },
+    { id: 'B', children: [{ id: 'B1' }] },
+]
+const isRootInForest = isRoot(forest, (node) => node.id === 'A')
+console.log(isRootInForest) // 输出：true
+
+// 单节点树
+const singleNode = { id: 'only' }
+const isSingleNodeRoot = isRoot(singleNode, (node) => node.id === 'only')
+console.log(isSingleNodeRoot) // 输出：true
+```
+
+#### isLeaf
+
+**功能**：判断节点是否为叶子节点（即没有子节点）
+
+**参数**：
+
+- `tree`: TreeNode | TreeNode[] - 树或森林
+- `predicate`: (node: TreeNode) => boolean - 定位节点的断言函数
+- `options`: BaseOptions - 配置选项
+    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+
+**返回值**：boolean - 是叶子节点则返回 true，否则 false
+
+**示例**：
+
+```js
+import { isLeaf } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [{ id: '1-1-1' }],
+        },
+        {
+            id: '1-2',
+        },
+    ],
+}
+
+// 叶子节点（没有子节点）
+const isLeafNode = isLeaf(tree, (node) => node.id === '1-1-1')
+console.log(isLeafNode) // 输出：true
+
+// 有子节点的节点不是叶子节点
+const isNotLeaf = isLeaf(tree, (node) => node.id === '1')
+console.log(isNotLeaf) // 输出：false
+
+// 空 children 数组也是叶子节点
+const isEmptyChildrenLeaf = isLeaf(tree, (node) => node.id === '1-2')
+console.log(isEmptyChildrenLeaf) // 输出：true
+
+// 森林中的叶子节点
+const forest = [
+    { id: 'A', children: [{ id: 'A1' }] },
+    { id: 'B' },
+]
+const isLeafInForest = isLeaf(forest, (node) => node.id === 'B')
+console.log(isLeafInForest) // 输出：true
+
+// 单节点树
+const singleNode = { id: 'only' }
+const isSingleNodeLeaf = isLeaf(singleNode, (node) => node.id === 'only')
+console.log(isSingleNodeLeaf) // 输出：true
 ```
 
 #### isSameDepth

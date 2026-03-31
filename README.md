@@ -105,6 +105,8 @@ forEach(tree, (node) => {
     - [isDescendantOf](#isdescendantof)
     - [isParentOf](#isparentof)
     - [isChildOf](#ischildof)
+    - [isRoot](#isroot)
+    - [isLeaf](#isleaf)
     - [isSameDepth](#issamedepth)
 - [Type Definitions](#type-definitions)
 
@@ -1520,6 +1522,117 @@ const isCustomChild = isChildOf(
     { childrenKey: 'subs' }
 )
 console.log(isCustomChild) // Output: true
+```
+
+#### isRoot
+
+**Function**: Determines if a node is a root node (i.e., has no parent)
+
+**Parameters**:
+
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `predicate`: (node: TreeNode) => boolean - Predicate function to locate the node
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+
+**Return Value**: boolean - Returns true if the node is a root node, otherwise false
+
+**Example**:
+
+```js
+import { isRoot } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [{ id: '1-1-1' }],
+        },
+    ],
+}
+
+// Root node
+const isRootNode = isRoot(tree, (node) => node.id === '1')
+console.log(isRootNode) // Output: true
+
+// Non-root node
+const isNotRoot = isRoot(tree, (node) => node.id === '1-1')
+console.log(isNotRoot) // Output: false
+
+// Leaf node is not a root node
+const isLeafNotRoot = isRoot(tree, (node) => node.id === '1-1-1')
+console.log(isLeafNotRoot) // Output: false
+
+// Root nodes in forest
+const forest = [
+    { id: 'A', children: [{ id: 'A1' }] },
+    { id: 'B', children: [{ id: 'B1' }] },
+]
+const isRootInForest = isRoot(forest, (node) => node.id === 'A')
+console.log(isRootInForest) // Output: true
+
+// Single node tree
+const singleNode = { id: 'only' }
+const isSingleNodeRoot = isRoot(singleNode, (node) => node.id === 'only')
+console.log(isSingleNodeRoot) // Output: true
+```
+
+#### isLeaf
+
+**Function**: Determines if a node is a leaf node (i.e., has no child nodes)
+
+**Parameters**:
+
+- `tree`: TreeNode | TreeNode[] - Tree or forest
+- `predicate`: (node: TreeNode) => boolean - Predicate function to locate the node
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+
+**Return Value**: boolean - Returns true if the node is a leaf node, otherwise false
+
+**Example**:
+
+```js
+import { isLeaf } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        {
+            id: '1-1',
+            children: [{ id: '1-1-1' }],
+        },
+        {
+            id: '1-2',
+        },
+    ],
+}
+
+// Leaf node (no child nodes)
+const isLeafNode = isLeaf(tree, (node) => node.id === '1-1-1')
+console.log(isLeafNode) // Output: true
+
+// Node with children is not a leaf node
+const isNotLeaf = isLeaf(tree, (node) => node.id === '1')
+console.log(isNotLeaf) // Output: false
+
+// Empty children array is also a leaf node
+const isEmptyChildrenLeaf = isLeaf(tree, (node) => node.id === '1-2')
+console.log(isEmptyChildrenLeaf) // Output: true
+
+// Leaf nodes in forest
+const forest = [
+    { id: 'A', children: [{ id: 'A1' }] },
+    { id: 'B' },
+]
+const isLeafInForest = isLeaf(forest, (node) => node.id === 'B')
+console.log(isLeafInForest) // Output: true
+
+// Single node tree
+const singleNode = { id: 'only' }
+const isSingleNodeLeaf = isLeaf(singleNode, (node) => node.id === 'only')
+console.log(isSingleNodeLeaf) // Output: true
 ```
 
 #### isSameDepth
