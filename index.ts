@@ -1,15 +1,23 @@
-// import { generateTree } from './src/utils/generateTree'
-// import { move, print } from './src/index'
+// import { swap, print, TreeNode } from './src/index'
+// const originalTree: TreeNode = {
+//     id: 1,
+//     children: [
+//         {
+//             id: 2,
+//             children: [{ id: 3 }, { id: 4 }],
+//         },
+//         {
+//             id: 5,
+//             children: [{ id: 6 }],
+//         },
+//         { id: 7, children: [{ id: 8 }] },
+//     ],
+// }
 
-// console.time('generateTree')
-// const tree = generateTree(1000000)
-// console.timeEnd('generateTree')
-// console.time('move')
-// const result = move(
-//     tree,
-//     (node) => node.id === 3907,
-//     (node) => node.id === 3906,
-//     'append'
+// const newTree = swap(
+//     originalTree,
+//     (node) => node.id === 2,
+//     (node) => node.id === 7
 // )
-// console.timeEnd('move')
-// print(result)
+
+// print(newTree)

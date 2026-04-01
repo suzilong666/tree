@@ -79,6 +79,7 @@ forEach(tree, (node) => {
     - [remove](#remove)
     - [replace](#replace)
     - [move](#move)
+    - [swap](#swap)
 - [4. 转换 (transform)](#4-转换-transform)
     - [arrayToTree](#arraytotree)
     - [treeToArray](#treearrayto)
@@ -571,7 +572,42 @@ const newTree = move(
     (node) => node.id === '1-2'
 )
 console.log(newTree.children.map((node) => node.id)) // 输出: ['1-2']
-console.log(newTree.children[0].children.map((node) => node.id)) // 输出: ['1-1']
+console.log(newTree.children[0].children.map((node) => node.id)) // 输出：['1-1']
+```
+
+#### swap
+
+**功能**：交换树中两个节点的位置，只操作第一个匹配的节点
+
+**参数**：
+
+- `tree`: TreeNode | TreeNode[] - 原树或森林
+- `predicate1`: (node: TreeNode) => boolean - 断言函数，用于定位第一个节点
+- `predicate2`: (node: TreeNode) => boolean - 断言函数，用于定位第二个节点
+- `options`: BaseOptions - 配置选项
+    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+
+**返回值**：TreeNode | TreeNode[] - 新树（如果未找到节点或无法交换，则返回原树）
+
+**示例**：
+
+```js
+import { swap } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        { id: 'A', value: 1 },
+        { id: 'B', value: 2 },
+    ],
+}
+
+const newTree = swap(
+    tree,
+    (node) => node.id === 'A',
+    (node) => node.id === 'B'
+)
+console.log(newTree.children.map((node) => node.value)) // 输出：[2, 1]
 ```
 
 ### 4. 转换 (transform)

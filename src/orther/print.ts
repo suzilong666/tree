@@ -1,5 +1,5 @@
 // utils/printTree.ts
-import { TreeNode, BaseOptions } from '../types'
+import { BaseOptions } from '../types'
 import { DEFAULT_CHILDREN_KEY } from '../constants'
 import { ensureArray } from '../utils/array'
 
@@ -8,10 +8,7 @@ import { ensureArray } from '../utils/array'
  * @param tree 树或森林
  * @param options 配置选项
  */
-export function print(
-    tree: TreeNode | TreeNode[],
-    options: BaseOptions = {}
-): void {
+export function print(tree: unknown, options: BaseOptions = {}): void {
     const { childrenKey = DEFAULT_CHILDREN_KEY } = options
 
     const nodes = ensureArray(tree)
@@ -22,7 +19,7 @@ export function print(
      * @param prefix 从祖先累积的前缀（不包含当前层的线条）
      * @param isLast 当前节点是否是父节点的最后一个子节点（用于决定当前层的线条和子节点的前缀）
      */
-    const printNode = (node: TreeNode, prefix: string, isLast: boolean) => {
+    const printNode = (node: unknown, prefix: string, isLast: boolean) => {
         // 打印当前节点
         if (prefix === '') {
             // 根节点直接输出对象，不加前缀线条
@@ -32,7 +29,7 @@ export function print(
             console.log(prefix + (isLast ? '└── ' : '├── '), node)
         }
 
-        const children = node[childrenKey]
+        const children = (node as Record<string, unknown>)?.[childrenKey]
         if (Array.isArray(children) && children.length > 0) {
             // 为子节点构建新前缀
             const childPrefix = prefix + (isLast ? '    ' : '│   ')

@@ -79,6 +79,7 @@ forEach(tree, (node) => {
     - [remove](#remove)
     - [replace](#replace)
     - [move](#move)
+    - [swap](#swap)
 - [4. Transformation (transform)](#4-transformation-transform)
     - [arrayToTree](#arraytotree)
     - [treeToArray](#treearrayto)
@@ -572,6 +573,41 @@ const newTree = move(
 )
 console.log(newTree.children.map((node) => node.id)) // Output: ['1-2']
 console.log(newTree.children[0].children.map((node) => node.id)) // Output: ['1-1']
+```
+
+#### swap
+
+**Function**: Swaps the positions of two nodes in the tree, only operates on the first matching nodes
+
+**Parameters**:
+
+- `tree`: TreeNode | TreeNode[] - Original tree or forest
+- `predicate1`: (node: TreeNode) => boolean - Predicate function to locate the first node
+- `predicate2`: (node: TreeNode) => boolean - Predicate function to locate the second node
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+
+**Return Value**: TreeNode | TreeNode[] - New tree (returns original tree if nodes not found or cannot be swapped)
+
+**Example**:
+
+```js
+import { swap } from '@suzilong/tree'
+
+const tree = {
+    id: '1',
+    children: [
+        { id: 'A', value: 1 },
+        { id: 'B', value: 2 },
+    ],
+}
+
+const newTree = swap(
+    tree,
+    (node) => node.id === 'A',
+    (node) => node.id === 'B'
+)
+console.log(newTree.children.map((node) => node.value)) // Output: [2, 1]
 ```
 
 ### 4. Transformation (transform)
