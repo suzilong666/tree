@@ -1,6 +1,14 @@
 import { DEFAULT_CHILDREN_KEY } from '../constants'
 import { BaseOptions, TreeNode } from '../types'
 
+/**
+ * 比较两棵树是否相等（通过自定义比较函数）
+ * @param tree1 第一棵树或森林
+ * @param tree2 第二棵树或森林
+ * @param compare 节点比较函数，接收两个节点参数，返回 boolean 值表示是否相等
+ * @param options 配置选项
+ * @returns 如果两棵树结构相同且所有对应节点都满足比较函数则返回 true，否则 false
+ */
 export function isEqual(
     tree1: TreeNode | TreeNode[],
     tree2: TreeNode | TreeNode[],

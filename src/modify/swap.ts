@@ -3,6 +3,14 @@ import { breadthFirst } from '../traverse'
 import { BaseOptions, TreeNode } from '../types'
 import { ensureArray } from '../utils/array'
 
+/**
+ * 交换树中两个节点的位置（只操作第一个匹配的节点）
+ * @param tree 原树或森林
+ * @param predicate1 定位第一个节点的断言函数
+ * @param predicate2 定位第二个节点的断言函数
+ * @param options 配置选项
+ * @returns 新树（如果未找到节点或无法交换，则返回原树）
+ */
 export function swap(
     tree: TreeNode | TreeNode[],
     predicate1: (node: TreeNode) => boolean,
