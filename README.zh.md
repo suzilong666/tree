@@ -110,6 +110,7 @@ forEach(tree, (node) => {
     - [isRoot](#isroot)
     - [isLeaf](#isleaf)
     - [isSameDepth](#issamedepth)
+    - [isEqual](#isequal)
 - [类型定义](#类型定义)
 
 ---
@@ -1807,6 +1808,54 @@ const sameDepthCustom = isSameDepth(
     { childrenKey: 'subs' }
 )
 console.log(sameDepthCustom) // 输出：true
+```
+
+#### isEqual
+
+**功能**：比较两棵树是否相等（通过自定义比较函数）
+
+**参数**：
+
+- `tree1`: TreeNode | TreeNode[] - 第一棵树或森林
+- `tree2`: TreeNode | TreeNode[] - 第二棵树或森林
+- `compare`: (node1: TreeNode, node2: TreeNode) => boolean - 节点比较函数
+- `options`: BaseOptions - 配置选项
+    - `childrenKey`: string - 自定义子节点字段名，默认为 'children'
+
+**返回值**：boolean - 如果两棵树结构相同且所有对应节点都满足比较函数则返回 true，否则 false
+
+**示例**：
+
+```js
+import { isEqual } from '@suzilong/tree'
+
+const tree1 = {
+    id: '1',
+    children: [
+        { id: '1-1', value: 10 },
+        { id: '1-2', value: 20 },
+    ],
+}
+
+const tree2 = {
+    id: '1',
+    children: [
+        { id: '1-1', value: 99 },
+        { id: '1-2', value: 88 },
+    ],
+}
+
+// 只比较 id，忽略 value
+const equalById = isEqual(tree1, tree2, (n1, n2) => n1.id === n2.id)
+console.log(equalById) // 输出：true
+
+// 比较 id 和 value
+const equalByAll = isEqual(
+    tree1,
+    tree2,
+    (n1, n2) => n1.id === n2.id && n1.value === n2.value
+)
+console.log(equalByAll) // 输出：false
 ```
 
 ## 类型定义

@@ -110,6 +110,7 @@ forEach(tree, (node) => {
     - [isRoot](#isroot)
     - [isLeaf](#isleaf)
     - [isSameDepth](#issamedepth)
+    - [isEqual](#isequal)
 - [Type Definitions](#type-definitions)
 
 ---
@@ -1805,6 +1806,54 @@ const sameDepthCustom = isSameDepth(
     { childrenKey: 'subs' }
 )
 console.log(sameDepthCustom) // Output: true
+```
+
+#### isEqual
+
+**Function**: Compares two trees for equality using a custom comparison function
+
+**Parameters**:
+
+- `tree1`: TreeNode | TreeNode[] - First tree or forest
+- `tree2`: TreeNode | TreeNode[] - Second tree or forest
+- `compare`: (node1: TreeNode, node2: TreeNode) => boolean - Node comparison function
+- `options`: BaseOptions - Configuration options
+    - `childrenKey`: string - Custom child node field name, default is 'children'
+
+**Return Value**: boolean - Returns true if both trees have the same structure and all corresponding nodes satisfy the comparison function, otherwise false
+
+**Example**:
+
+```js
+import { isEqual } from '@suzilong/tree'
+
+const tree1 = {
+    id: '1',
+    children: [
+        { id: '1-1', value: 10 },
+        { id: '1-2', value: 20 },
+    ],
+}
+
+const tree2 = {
+    id: '1',
+    children: [
+        { id: '1-1', value: 99 },
+        { id: '1-2', value: 88 },
+    ],
+}
+
+// Compare only by id, ignoring value
+const equalById = isEqual(tree1, tree2, (n1, n2) => n1.id === n2.id)
+console.log(equalById) // Output: true
+
+// Compare by both id and value
+const equalByAll = isEqual(
+    tree1,
+    tree2,
+    (n1, n2) => n1.id === n2.id && n1.value === n2.value
+)
+console.log(equalByAll) // Output: false
 ```
 
 ## Type Definitions
