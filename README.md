@@ -173,19 +173,6 @@ depthFirst(tree, (node) => {
 // Output: 1, 1-1, 1-1-1
 ```
 
-// Post-order traversal
-console.log('Post-order traversal:')
-depthFirst(
-tree,
-(node) => {
-console.log(node.id)
-},
-{ order: 'post' }
-)
-// Output: 1-1-1, 1-1, 1
-
-````
-
 #### breadthFirst
 
 **Function**: Breadth-first traversal of the tree structure
@@ -208,7 +195,7 @@ breadthFirst(tree, (node) => {
     console.log(node.id)
 })
 // Output: 1, 1-1, 1-2
-````
+```
 
 ### 2. Search (find)
 

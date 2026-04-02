@@ -132,22 +132,21 @@ forEach(tree, (node) => {
 
 **示例**：
 
-``js
+```js
 import { forEach } from '@suzilong/tree'
 
 const tree = {
-id: '1',
-children: [{ id: '1-1', children: [{ id: '1-1-1' }] }],
+    id: '1',
+    children: [{ id: '1-1', children: [{ id: '1-1-1' }] }],
 }
 
 forEach(tree, (node, context) => {
-console.log(`节点：${node.id}, 深度：${context.depth}`)
+    console.log(`节点：${node.id}, 深度：${context.depth}`)
 })
 // 输出：节点：1, 深度：0
 // 节点：1-1, 深度：1
 // 节点：1-1-1, 深度：2
-
-````
+```
 
 #### depthFirst
 
@@ -176,7 +175,7 @@ depthFirst(tree, (node) => {
     console.log(node.id)
 })
 // 输出：1, 1-1, 1-1-1
-````
+```
 
 #### breadthFirst
 
